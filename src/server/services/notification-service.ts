@@ -66,7 +66,10 @@ export async function notify(input: NotifyInput): Promise<void> {
     },
   })
 
-  const externalBody = input.externalBody ?? input.title
+  // Push/SMS text stays non-clinical (risk R-16). When no external body is supplied we
+  // send the title alone rather than repeating it — "Your report is ready. Your report is
+  // ready" is what a duplicated template produces, and patients read these.
+  const externalBody = input.externalBody ?? null
   const wantsPush = prefs?.push ?? fallback.push
   const wantsSms = prefs?.sms ?? fallback.sms
   const wantsEmail = prefs?.email ?? fallback.email
@@ -76,7 +79,7 @@ export async function notify(input: NotifyInput): Promise<void> {
       const result = await getPushProvider().send({
         userId: input.userId,
         title: input.title,
-        body: externalBody,
+        body: externalBody ?? input.title,
         deepLink: input.actionUrl,
       })
       return 'skipped' in result ? null : result.providerRef
@@ -84,12 +87,18 @@ export async function notify(input: NotifyInput): Promise<void> {
   }
 
   if (wantsSms) {
-    const user = await db.user.findUnique({ where: { id: input.userId }, select: { phone: true } })
+    const [user, clinic] = await Promise.all([
+      db.user.findUnique({ where: { id: input.userId }, select: { phone: true } }),
+      // The clinic name is configuration, not a constant (§42) — an SMS signed with the
+      // wrong clinic's name is the most visible way to break white-labelling.
+      db.clinic.findUnique({ where: { id: input.clinicId }, select: { name: true } }),
+    ])
     if (user?.phone) {
       await deliver(input, 'SMS', async () => {
+        const detail = externalBody && externalBody !== input.title ? `. ${externalBody}` : ''
         const { providerRef } = await getSmsProvider().send({
           to: user.phone,
-          body: `${input.title}. ${externalBody} — Clinic 360`,
+          body: `${input.title}${detail} — ${clinic?.name ?? 'Your clinic'}`,
         })
         return providerRef
       })
@@ -103,7 +112,7 @@ export async function notify(input: NotifyInput): Promise<void> {
         const { providerRef } = await getEmailProvider().send({
           to: user.email!,
           subject: input.title,
-          body: externalBody,
+          body: externalBody ?? input.title,
         })
         return providerRef
       })

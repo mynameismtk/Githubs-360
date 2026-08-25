@@ -54,10 +54,16 @@ export async function requestOtp(
     if (!perIp.allowed) throw errors.rateLimited()
   }
 
-  const user = await db.user.findUnique({
-    where: { clinicId_phone: { clinicId, phone } },
-    select: { id: true, isActive: true, deletedAt: true },
-  })
+  const [user, clinic] = await Promise.all([
+    db.user.findUnique({
+      where: { clinicId_phone: { clinicId, phone } },
+      select: { id: true, isActive: true, deletedAt: true },
+    }),
+    // The clinic name is configuration, not a constant (§42). This is the first message a
+    // patient ever receives from us, so signing it with the wrong name is the worst place
+    // to leak a hardcoded brand.
+    db.clinic.findUnique({ where: { id: clinicId }, select: { name: true } }),
+  ])
 
   const code = generateOtp()
   const salt = newSalt()
@@ -81,7 +87,7 @@ export async function requestOtp(
   if (user && user.isActive && !user.deletedAt) {
     await getSmsProvider().send({
       to: phone,
-      body: `${code} is your Clinic 360 verification code. It expires in 5 minutes. Do not share it with anyone.`,
+      body: `${code} is your ${clinic?.name ?? 'clinic'} verification code. It expires in 5 minutes. Do not share it with anyone.`,
     })
   }
 
