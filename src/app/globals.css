@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Clinic 360 — token layer.
+ * Semantic names only. Components never reference a literal colour.
+ * docs/06-design-system.md §2.
+ */
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --surface-sunken: #f2f0ec;
+  --surface-raised: #ffffff;
+  --border: #e7e3dc;
+  --border-strong: #d3cec5;
+
+  --ink: #16211f;
+  --ink-muted: #5c6b68;
+  --ink-subtle: #8a9793;
+  --ink-inverse: #ffffff;
+
+  /* Brand tokens are overwritten at runtime from Clinic.brandPrimary/brandAccent. */
+  --brand: #0e7c6b;
+  --brand-hover: #0b6759;
+  --brand-ink: #0a5f52;
+  --brand-wash: #e8f3f0;
+
+  --accent: #c2703d;
+  --accent-wash: #fbf0e8;
+
+  --positive: #2f7d5b;
+  --positive-wash: #e9f4ee;
+  --caution: #b07a16;
+  --caution-wash: #fdf3e0;
+  --critical: #b3261e;
+  --critical-wash: #fdecea;
+  --emergency: #c0271f;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+[data-theme='dark'] {
+  --bg: #101614;
+  --surface: #171e1c;
+  --surface-sunken: #1e2624;
+  --surface-raised: #1c2422;
+  --border: #2a3331;
+  --border-strong: #3a4441;
+
+  --ink: #eef2f0;
+  --ink-muted: #a3b0ad;
+  --ink-subtle: #77837f;
+  --ink-inverse: #101614;
+
+  --brand: #3aa08c;
+  --brand-hover: #47b09b;
+  --brand-ink: #7fd0bf;
+  --brand-wash: #16302b;
+
+  --accent: #d9895a;
+  --accent-wash: #2e2019;
+
+  --positive: #4da97f;
+  --positive-wash: #162b21;
+  --caution: #d3a03c;
+  --caution-wash: #2d2513;
+  --critical: #e2685f;
+  --critical-wash: #2f1917;
+  --emergency: #e2685f;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+ * Numbers in a clinical or financial context must not jitter or misalign.
+ * Applied to every value that is read as data rather than as prose.
+ */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/*
+ * A single, consistent, always-visible focus ring. `outline: none` without a
+ * replacement is an accessibility failure, so it never appears in this codebase.
+ */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip link — keyboard users must be able to bypass the nav. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+}
+.skip-link:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 0.5rem;
+}
+
+/* Bottom nav must clear the iOS home indicator. */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  animation: shimmer 1.4s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hide scrollbars on horizontal chip rails without losing scrollability. */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
