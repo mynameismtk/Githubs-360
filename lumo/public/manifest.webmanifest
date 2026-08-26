@@ -1,0 +1,15 @@
+{
+  "name": "Lumo — for the days that are heavy",
+  "short_name": "Lumo",
+  "description": "Depression support, CBT and behavioural activation tools. Works offline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#14100E",
+  "theme_color": "#14100E",
+  "categories": ["health", "lifestyle"],
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

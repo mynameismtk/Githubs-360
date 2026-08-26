@@ -1,0 +1,101 @@
+/* ============================================================
+   LUMO DESIGN TOKENS
+   Direction: warm dawn. First light through a window at 6am.
+   Dark is the default and is the better of the two themes.
+   Edit here; never hard-code a colour in a component.
+   ============================================================ */
+
+:root,
+:root[data-theme='dark'] {
+  /* Surfaces — deep warm near-black, never blue-black */
+  --bg-base: #14100e;
+  --bg-elevated: #1f1a17;
+  --bg-card: #272120;
+  --bg-scrim: rgba(10, 8, 7, 0.72);
+  --hairline: rgba(245, 237, 228, 0.09);
+
+  /* Accents */
+  --amber-core: #ffb35c;
+  --amber-deep: #e08a2e;
+  --clay: #c97b63;
+  --sage: #7e9b84;
+  --danger-soft: #d96a5b; /* safety features only — never errors */
+
+  /* Text */
+  --cream: #f5ede4;
+  --cream-dim: #a69a90;
+  --on-amber: #2a1a08;
+
+  /* Glow */
+  --glow-strong: rgba(255, 179, 92, 0.36);
+  --glow-soft: rgba(255, 179, 92, 0.14);
+  --shadow-card: 0 2px 18px rgba(0, 0, 0, 0.34);
+}
+
+:root[data-theme='light'] {
+  --bg-base: #fbf6f0;
+  --bg-elevated: #fffaf4;
+  --bg-card: #ffffff;
+  --bg-scrim: rgba(56, 42, 33, 0.5);
+  --hairline: rgba(60, 44, 34, 0.12);
+
+  /* accents darkened ~12% so text on them clears AA */
+  --amber-core: #d9902f;
+  --amber-deep: #b8701f;
+  --clay: #a85f48;
+  --sage: #5e7d67;
+  --danger-soft: #b84f42;
+
+  --cream: #2a211c;
+  --cream-dim: #6d6058;
+  --on-amber: #241505;
+
+  --glow-strong: rgba(217, 144, 47, 0.28);
+  --glow-soft: rgba(217, 144, 47, 0.12);
+  --shadow-card: 0 2px 14px rgba(93, 68, 45, 0.1);
+}
+
+:root {
+  /* Type */
+  --font-display: 'Fraunces', 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --t-34: 2.125rem;
+  --t-28: 1.75rem;
+  --t-22: 1.375rem;
+  --t-17: 1.0625rem;
+  --t-15: 0.9375rem;
+  --t-13: 0.8125rem;
+  --lh-body: 1.6;
+
+  /* Shape */
+  --r-card: 20px;
+  --r-sheet: 28px;
+  --r-pill: 999px;
+
+  /* Space */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+
+  /* Motion — slower than a normal app on purpose */
+  --dur-fast: 280ms;
+  --dur-slow: 400ms;
+  --ease-out: cubic-bezier(0.22, 0.68, 0.36, 1);
+
+  /* Touch */
+  --tap-min: 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 1ms;
+    --dur-slow: 1ms;
+  }
+}
