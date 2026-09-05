@@ -162,3 +162,128 @@ body {
     display: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Ankura — token layer.
+ *
+ * Fully additive and scoped under `.ankura` so nothing here ever touches a
+ * Clinic 360 screen. Ankura is a different product living in the same repo:
+ * a companion for someone mid-IVF-cycle, often reading this at 2am. Where
+ * Clinic 360 chose deep teal + warm bone for "premium clinical calm", Ankura
+ * chooses sand + sage + a sparing gold for "held, not treated" — see the
+ * build brief §4. Components inside `.ankura` reference these tokens only;
+ * never a literal hex value.
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+.ankura {
+  --a-bg: #faf1e2;
+  --a-surface: #fffdf8;
+  --a-surface-sunken: #f3e7d2;
+  --a-border: #e8d8ba;
+  --a-border-strong: #d6c19a;
+
+  --a-ink: #2f2a22;
+  --a-ink-muted: #6f6552;
+  --a-ink-subtle: #a0937a;
+  --a-ink-inverse: #fffdf8;
+
+  /* Deep sage — the grounding colour. Calm, alive, "sprout" made literal. */
+  --a-brand: #4f6d5a;
+  --a-brand-hover: #405a49;
+  --a-brand-ink: #33473a;
+  --a-brand-wash: #e9efe6;
+
+  /* Soft gold — the hope accent. Used sparingly: milestones, streaks, trigger day. */
+  --a-accent: #cc9a3f;
+  --a-accent-hover: #b3852f;
+  --a-accent-wash: #faf0d8;
+
+  /* Dusty rose — decorative only (illustration, gentle emphasis), never a CTA colour. */
+  --a-rose: #c98a86;
+  --a-rose-wash: #f9ece9;
+
+  --a-positive: #4f7a5e;
+  --a-positive-wash: #eaf3ec;
+  --a-caution: #b9832f;
+  --a-caution-wash: #faf0da;
+  --a-critical: #ab5347;
+  --a-critical-wash: #f7e9e5;
+
+  --a-font-sans: var(--font-ankura-sans), ui-rounded, 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  --a-font-serif: var(--font-ankura-serif), 'Fraunces', ui-serif, Georgia, serif;
+
+  background: var(--a-bg);
+  color: var(--a-ink);
+  font-family: var(--a-font-sans);
+  min-height: 100dvh;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ankura {
+    --a-bg: #161a15;
+    --a-surface: #1e231d;
+    --a-surface-sunken: #262c22;
+    --a-border: #333a2f;
+    --a-border-strong: #454e3d;
+
+    --a-ink: #f1ede3;
+    --a-ink-muted: #b5ac97;
+    --a-ink-subtle: #837a65;
+    --a-ink-inverse: #161a15;
+
+    --a-brand: #7fa088;
+    --a-brand-hover: #93b19b;
+    --a-brand-ink: #b7cfbc;
+    --a-brand-wash: #23342a;
+
+    --a-accent: #e0b563;
+    --a-accent-hover: #ecc57a;
+    --a-accent-wash: #362c17;
+
+    --a-rose: #d99e9a;
+    --a-rose-wash: #322220;
+
+    --a-positive: #7fa088;
+    --a-positive-wash: #1f2c22;
+    --a-caution: #e0b563;
+    --a-caution-wash: #362c17;
+    --a-critical: #d68a7c;
+    --a-critical-wash: #33221e;
+  }
+}
+
+/* A held breath, not a snap — the motion signature for Ankura's confirmations. */
+@keyframes ankura-exhale {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.ankura-exhale {
+  animation: ankura-exhale 520ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@keyframes ankura-drift {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1.5deg);
+  }
+}
+.ankura-drift {
+  animation: ankura-drift 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ankura-exhale,
+  .ankura-drift {
+    animation: none !important;
+  }
+}

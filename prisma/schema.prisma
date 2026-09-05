@@ -1743,3 +1743,362 @@ model AuditLog {
   @@index([severity, createdAt(sort: Desc)])
   @@map("audit_logs")
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ANKURA — India-first IVF/fertility companion app.
+//
+// A separate product sharing this repo and this Postgres instance, not an
+// extension of Clinic 360: its own auth (phone+OTP, own User/Session tables),
+// its own tenancy root (AnkuraClinic, for the white-label licensing arm), and
+// its own naming (every model prefixed `Ankura`) so it can never be confused
+// with — or accidentally join against — a Clinic 360 table. See
+// src/server/ankura/ and src/app/ankura/.
+// ═══════════════════════════════════════════════════════════════════════════
+
+enum AnkuraCycleType {
+  IUI
+  IVF
+  FET
+  EGG_FREEZING
+}
+
+/// Coarse, patient-facing "where am I right now". Finer-grained editorial content
+/// (day-by-day) is keyed by AnkuraJourneyPhase instead — see AnkuraJourneyDay.
+enum AnkuraCycleStage {
+  STIMULATION
+  RETRIEVAL
+  TRANSFER
+  TWO_WEEK_WAIT
+  BETA_RESULT
+  PREGNANT
+  NOT_PREGNANT
+  PAUSED
+}
+
+enum AnkuraJourneyPhase {
+  STIMULATION
+  RETRIEVAL
+  FERTILIZATION
+  CLEAVAGE
+  MORULA
+  BLASTOCYST
+  TRANSFER
+  TWO_WEEK_WAIT
+  BETA_DAY
+}
+
+enum AnkuraRoute {
+  SUBCUTANEOUS
+  INTRAMUSCULAR
+  ORAL
+  VAGINAL
+}
+
+enum AnkuraDoseOutcome {
+  TAKEN
+  SKIPPED
+  MISSED
+}
+
+enum AnkuraCostCategory {
+  CONSULTATION
+  MEDICATION
+  MONITORING
+  RETRIEVAL
+  ICSI
+  FREEZING
+  STORAGE
+  FET
+  TRAVEL
+  OTHER
+}
+
+enum AnkuraRole {
+  PATIENT
+  SUPPORT
+  CLINIC_STAFF
+}
+
+enum AnkuraSupportStatus {
+  PENDING
+  ACTIVE
+  REVOKED
+}
+
+/// The white-label tenancy root (brief §3.7). Colours are injected as CSS custom
+/// properties at runtime, same pattern as Clinic.brandPrimary/brandAccent.
+model AnkuraClinic {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  tagline      String?
+  logoUrl      String?
+  brandPrimary String   @default("#4f6d5a")
+  brandAccent  String   @default("#cc9a3f")
+  city         String?
+  supportPhone String?
+  supportEmail String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  users             AnkuraUser[]
+  announcements     AnkuraAnnouncement[]
+  protocolTemplates AnkuraProtocolTemplate[]
+  packages          AnkuraClinicPackage[]
+
+  @@map("ankura_clinics")
+}
+
+/// A login identity. Phone is the credential, same OTP shape as Clinic 360's User,
+/// but this table is entirely separate — no foreign key ever crosses products.
+model AnkuraUser {
+  id              String            @id @default(cuid())
+  clinicId        String?
+  phone           String            @unique
+  /// Null until onboarding completes — a fresh signup exists the moment the phone is
+  /// verified, before a name has ever been asked for.
+  fullName        String?
+  locale          String            @default("en")
+  role            AnkuraRole        @default(PATIENT)
+  cycleType       AnkuraCycleType?
+  cycleStage      AnkuraCycleStage?
+  cycleStartedAt  DateTime?         @db.Date
+  transferAt      DateTime?         @db.Date
+  betaTestAt      DateTime?         @db.Date
+  phoneVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+  onboardedAt     DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  clinic                AnkuraClinic?        @relation(fields: [clinicId], references: [id])
+  sessions              AnkuraSession[]
+  otpChallenges         AnkuraOtpChallenge[]
+  reminders             AnkuraReminder[]
+  costEntries           AnkuraCostEntry[]
+  budget                AnkuraBudget?
+  supportLinksAsPrimary AnkuraSupportLink[]  @relation("SupportPrimary")
+  supportLinksAsSupport AnkuraSupportLink[]  @relation("SupportPerson")
+
+  @@index([clinicId])
+  @@map("ankura_users")
+}
+
+model AnkuraSession {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  lastSeenAt DateTime  @default(now())
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  user AnkuraUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([expiresAt])
+  @@map("ankura_sessions")
+}
+
+/// The code itself is never stored — only a scrypt hash, same convention as
+/// Clinic 360's OtpChallenge.
+model AnkuraOtpChallenge {
+  id          String    @id @default(cuid())
+  phone       String
+  userId      String?
+  codeHash    String
+  salt        String
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(5)
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  user AnkuraUser? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([phone, createdAt])
+  @@index([expiresAt])
+  @@map("ankura_otp_challenges")
+}
+
+/// Partner/support-person mode (brief §3.1) — a second linked login (spouse, mother,
+/// sister) who receives the same reminders and can mark doses given. Starts PENDING;
+/// only the primary can confirm it to ACTIVE, so a support person can never attach
+/// themselves to someone's cycle without that person's explicit action.
+model AnkuraSupportLink {
+  id           String              @id @default(cuid())
+  primaryId    String
+  supportId    String
+  relationship String
+  status       AnkuraSupportStatus @default(PENDING)
+  createdAt    DateTime            @default(now())
+  confirmedAt  DateTime?
+
+  primary AnkuraUser @relation("SupportPrimary", fields: [primaryId], references: [id], onDelete: Cascade)
+  support AnkuraUser @relation("SupportPerson", fields: [supportId], references: [id], onDelete: Cascade)
+
+  @@unique([primaryId, supportId])
+  @@index([supportId, status])
+  @@map("ankura_support_links")
+}
+
+/// Sourced only from the user's own prescription — never suggested by the app (§3.1).
+model AnkuraReminder {
+  id        String      @id @default(cuid())
+  userId    String
+  drugName  String
+  dose      String
+  route     AnkuraRoute @default(SUBCUTANEOUS)
+  /// Trigger shots are the highest-stakes reminder: mistimed by even an hour, a
+  /// retrieval can be affected. Rendered with distinct urgency in the UI.
+  isTrigger Boolean     @default(false)
+  timeOfDay String
+  startDate DateTime    @db.Date
+  endDate   DateTime?   @db.Date
+  notes     String?
+  isActive  Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user AnkuraUser      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs AnkuraDoseLog[]
+
+  @@index([userId, isActive])
+  @@map("ankura_reminders")
+}
+
+model AnkuraDoseLog {
+  id           String            @id @default(cuid())
+  reminderId   String
+  scheduledFor DateTime
+  outcome      AnkuraDoseOutcome
+  markedById   String?
+  recordedAt   DateTime          @default(now())
+
+  reminder AnkuraReminder @relation(fields: [reminderId], references: [id], onDelete: Cascade)
+
+  @@unique([reminderId, scheduledFor])
+  @@index([reminderId, scheduledFor(sort: Desc)])
+  @@map("ankura_dose_logs")
+}
+
+/// The emotional core of the app (brief §3.2) — data-driven so copy can be edited
+/// without a redeploy. isReviewed must be true before content ships; clinical
+/// sign-off is a hard requirement, not a formality.
+model AnkuraJourneyDay {
+  id              String             @id @default(cuid())
+  slug            String             @unique
+  phase           AnkuraJourneyPhase
+  dayLabel        String
+  title           String
+  bodyEn          String
+  feelingsEn      String
+  illustrationKey String             @default("sprout")
+  displayOrder    Int
+  isReviewed      Boolean            @default(false)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([displayOrder])
+  @@map("ankura_journey_days")
+}
+
+/// English + Hindi for MVP (brief §3.3, §7).
+model AnkuraGlossaryTerm {
+  id           String   @id @default(cuid())
+  termEn       String
+  termHi       String?
+  definitionEn String
+  definitionHi String?
+  category     String   @default("General")
+  aliases      String[] @default([])
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([termEn])
+  @@index([category])
+  @@map("ankura_glossary_terms")
+}
+
+model AnkuraCostEntry {
+  id         String             @id @default(cuid())
+  userId     String
+  category   AnkuraCostCategory
+  label      String
+  /// Rupees, not paise — Ankura's cost tracker is patient-entered estimates for
+  /// budgeting, not a billing ledger, so whole-rupee Int keeps entry friction low.
+  amount     Int
+  incurredAt DateTime           @db.Date
+  notes      String?
+  createdAt  DateTime           @default(now())
+
+  user AnkuraUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, incurredAt(sort: Desc)])
+  @@map("ankura_cost_entries")
+}
+
+model AnkuraBudget {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  amount    Int
+  updatedAt DateTime @updatedAt
+
+  user AnkuraUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ankura_budgets")
+}
+
+/// "This clinic's IVF package typically includes X" (§3.4) — clinic-configurable.
+model AnkuraClinicPackage {
+  id           String   @id @default(cuid())
+  clinicId     String
+  name         String
+  priceFrom    Int
+  priceTo      Int?
+  includes     String[] @default([])
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  clinic AnkuraClinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId, isActive])
+  @@map("ankura_clinic_packages")
+}
+
+model AnkuraAnnouncement {
+  id          String    @id @default(cuid())
+  clinicId    String
+  title       String
+  body        String
+  isPinned    Boolean   @default(false)
+  publishedAt DateTime  @default(now())
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  clinic AnkuraClinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId, publishedAt(sort: Desc)])
+  @@map("ankura_announcements")
+}
+
+/// Clinic-authored starting point for reminders (§3.7). Never auto-applied — a
+/// patient's own prescription always wins (§3.1); staff push this as a suggestion.
+model AnkuraProtocolTemplate {
+  id        String   @id @default(cuid())
+  clinicId  String
+  name      String
+  /// [{ drugName, dose, route, timeOfDay, isTrigger }]
+  items     Json     @default("[]")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clinic AnkuraClinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId, isActive])
+  @@map("ankura_protocol_templates")
+}
