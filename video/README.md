@@ -22,8 +22,12 @@ npm install                      # playwright (uses the preinstalled Chromium)
 python3 music.py out/music.wav   # original score, synthesized with numpy/scipy
 node render.mjs sheet 2.25 4.6   # stills at given times -> out/sheet/
 node render.mjs video 60 2       # 60 fps, 2 sub-frames blended for motion blur -> out/video_silent.mp4
-ffmpeg -i out/video_silent.mp4 -i out/music.wav -c:v copy -c:a aac -b:a 256k -shortest out/meriva_launch.mp4
+ffmpeg -i out/video_silent.mp4 -i out/music.wav -c:v copy -c:a aac -b:a 256k -shortest final/meriva_launch.mp4
 ```
+
+`final/` holds the deliverables: `meriva_launch.mp4`, the score (`music.wav`) and the review
+contact sheets (`contact_v1.png` before fixes, `contact_v2.png` after). `out/` is scratch and is
+git-ignored.
 
 `index.html` is a deterministic composition: `render(t)` sets every style from `t` alone, so
 any frame can be rendered on its own and the output does not depend on machine speed.
