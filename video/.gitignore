@@ -1,0 +1,6 @@
+node_modules/
+out/*
+!out/meriva_launch.mp4
+!out/music.wav
+!out/contact_v1.png
+!out/contact_v2.png

@@ -1,0 +1,580 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Meriva launch</title>
+<style>
+@font-face{font-family:Mont;src:url(../assets/fonts/montserrat-latin-500-normal.woff2);font-weight:500}
+@font-face{font-family:Mont;src:url(../assets/fonts/montserrat-latin-600-normal.woff2);font-weight:600}
+@font-face{font-family:Mont;src:url(../assets/fonts/montserrat-latin-700-normal.woff2);font-weight:700}
+@font-face{font-family:Mont;src:url(../assets/fonts/montserrat-latin-800-normal.woff2);font-weight:800}
+@font-face{font-family:Mont;src:url(../assets/fonts/montserrat-latin-900-normal.woff2);font-weight:900}
+@font-face{font-family:Cinzel;src:url(../assets/fonts/cinzel-latin-600-normal.woff2);font-weight:600}
+@font-face{font-family:Corm;src:url(../assets/fonts/cormorant-garamond-latin-600-italic.woff2);font-weight:600;font-style:italic}
+@font-face{font-family:Inter;src:url(../assets/fonts/Inter-SemiBold.otf);font-weight:600}
+
+:root{--navy:#002C69;--royal:#035EA6;--sky:#1E8DD2;--orange:#FA7A11;--amber:#FDA01A;--bone:#F7F5F1}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
+#stage{position:absolute;inset:0;width:1080px;height:1920px;overflow:hidden;background:var(--bone)}
+.abs{position:absolute;left:0;top:0}
+.layer{position:absolute;inset:0}
+
+/* ── hook ─────────────────────────────────── */
+#hook{background:radial-gradient(150% 62% at 50% 52%,#081f47 0%,#081f47 52%,#04122b 82%,#020B1C 100%)}
+#hookGlow{position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 55%,rgba(250,122,17,.55),transparent 70%);opacity:0;mix-blend-mode:screen}
+#hookStack{position:absolute;inset:0;transform-origin:540px 960px}
+.hw{position:absolute;left:60px;font-family:Mont;font-weight:900;color:#fff;white-space:nowrap;line-height:1;letter-spacing:-.02em;transform-origin:50% 50%;will-change:transform}
+.hw.accent{color:var(--orange)}
+#hookLabel{position:absolute;top:118px;left:0;width:1080px;text-align:center;font:600 22px Mont;letter-spacing:.42em;color:rgba(255,255,255,.55)}
+
+/* ── light world ──────────────────────────── */
+#light{background:var(--bone);overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(90px)}
+#watermark{position:absolute;width:1700px;left:-310px;top:260px;opacity:.06}
+#grid{position:absolute;inset:0;background-image:radial-gradient(rgba(0,44,105,.13) 1.4px,transparent 1.6px);background-size:36px 36px;opacity:.55}
+#titleScrim{position:absolute;left:0;top:0;width:1080px;height:560px;background:linear-gradient(var(--bone) 62%,rgba(247,245,241,0));z-index:5;opacity:0}
+.title{position:absolute;left:0;top:0;width:1080px;z-index:6}
+.tag{position:absolute;top:150px;width:1080px;text-align:center;font:700 28px Mont;letter-spacing:.34em;color:var(--orange);white-space:nowrap}
+.bigRow{position:absolute;top:190px;width:1080px;height:250px;overflow:hidden;text-align:center;white-space:nowrap}
+.big{display:inline-block;font-family:Mont;font-weight:900;color:var(--navy);line-height:1;letter-spacing:-.02em}
+.big.cinzel{font-family:Cinzel;font-weight:600;letter-spacing:.02em}
+.big span{display:inline-block;will-change:transform}
+.big .dot{color:var(--orange)}
+.sub{position:absolute;top:448px;width:1080px;text-align:center;font:italic 600 50px Corm;color:var(--navy);white-space:nowrap}
+
+/* ── phone ────────────────────────────────── */
+#phoneCam{position:absolute;left:0;top:0;transform-origin:0 0;z-index:3}
+#phone3d{position:absolute;left:0;top:0;transform-origin:195px 398px}
+#phoneShadow{position:absolute;left:-10px;top:-40px;width:410px;height:900px;border-radius:70px;background:rgba(0,30,80,.55);filter:blur(46px);transform:translate(0,40px)}
+#phoneBody{position:absolute;left:-14px;top:-61px;width:418px;height:919px;border-radius:62px;background:linear-gradient(145deg,#2a3448,#0b1120 40%,#05080f);box-shadow:inset 0 0 0 2px #3b465c,inset 0 0 0 5px #0a0f19}
+#screen{position:absolute;left:14px;top:14px;width:390px;height:891px;border-radius:48px;overflow:hidden;background:#FAF9F7}
+#status{position:absolute;left:0;top:0;width:390px;height:47px;background:#FAF9F7}
+#status .time{position:absolute;left:44px;top:15px;font:600 16px Inter;color:#16211f}
+#status svg{position:absolute;right:30px;top:17px}
+#island{position:absolute;left:146px;top:25px;width:126px;height:36px;border-radius:20px;background:#000}
+#content{position:absolute;left:0;top:47px;width:390px;height:844px;overflow:hidden;background:#FAF9F7}
+.scr{position:absolute;left:0;top:0;width:390px;height:844px;display:block}
+.crop{position:absolute;background-repeat:no-repeat;background-size:390px 844px}
+#homeScroll{position:absolute;left:0;top:0;width:390px;height:844px;overflow:hidden}
+#homeScroll .full{position:absolute;left:0;top:0;width:390px;height:1924px}
+#pieces{position:absolute;left:0;top:0}
+#pieces .crop{will-change:transform}
+#overlay{position:absolute;left:0;top:0}
+#cursor{position:absolute;left:0;top:0;width:34px;height:46px;transform-origin:0 0;filter:drop-shadow(0 4px 6px rgba(0,20,60,.35))}
+.ripple{position:absolute;left:0;top:0;border-radius:50%;border:3px solid var(--orange);background:rgba(250,122,17,.18)}
+.press{position:absolute;background-repeat:no-repeat;transform-origin:50% 50%}
+.hl{position:absolute;left:0;top:0;overflow:visible}
+.confetti{position:absolute;left:0;top:0;transform-origin:50% 50%}
+.callout{position:absolute;left:0;top:0;transform-origin:50% 50%;background-size:390px 844px;background-repeat:no-repeat;border-radius:6px;background-color:#fff}
+
+/* ── logo world ───────────────────────────── */
+#logo{background:radial-gradient(90% 60% at 50% 45%,#ffffff 0%,#fbfaf7 55%,#efebe4 100%)}
+#logoRig{position:absolute;inset:0;transform-origin:540px 950px}
+.lp{position:absolute;display:block;will-change:transform}
+#markGlow{position:absolute;left:290px;top:420px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(253,160,26,.55),rgba(30,141,210,.25) 45%,transparent 70%);filter:blur(20px);opacity:0}
+.shock{position:absolute;border-radius:50%;border:4px solid var(--orange);opacity:0}
+#sweep{position:absolute;-webkit-mask-size:100% 100%;mask-size:100% 100%;background:linear-gradient(100deg,transparent 35%,rgba(255,255,255,.85) 50%,transparent 65%);background-size:300% 100%;background-repeat:no-repeat}
+#cta{position:absolute;left:540px;top:1335px;display:flex;align-items:center;gap:22px;padding:26px 56px 28px 40px;border-radius:999px;background:var(--navy);box-shadow:0 26px 60px rgba(0,44,105,.35);white-space:nowrap;transform-origin:50% 50%}
+#cta .l1{font:700 40px Mont;color:#fff;letter-spacing:.005em}
+#cta .l2{font:700 25px Mont;color:var(--amber);letter-spacing:.46em;margin-top:6px}
+
+/* ── fx ───────────────────────────────────── */
+#iris{position:absolute;left:540px;top:960px;border-radius:50%;border:10px solid var(--orange);opacity:0;z-index:20}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;z-index:21;pointer-events:none}
+#grain{position:absolute;inset:-64px;opacity:.07;mix-blend-mode:overlay;z-index:22}
+#vignette{position:absolute;inset:0;background:radial-gradient(ellipse 85% 70% at 50% 50%,transparent 60%,rgba(0,10,30,.32) 100%);z-index:22}
+.corner{position:absolute;width:34px;height:34px;border-color:rgba(0,44,105,.35);border-style:solid;border-width:0;z-index:23}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1 · HOOK -->
+  <div id="hook" class="layer">
+    <div id="hookGlow"></div>
+    <div id="hookLabel">MERIVA MEDICAL CENTRE · COIMBATORE</div>
+    <div id="hookStack"></div>
+  </div>
+
+  <!-- 2–3 · PRODUCT + FEATURES -->
+  <div id="light" class="layer">
+    <div class="blob" id="blobA" style="width:900px;height:900px;background:#035EA6"></div>
+    <div class="blob" id="blobB" style="width:800px;height:800px;background:#FA7A11"></div>
+    <div class="blob" id="blobC" style="width:620px;height:620px;background:#1E8DD2"></div>
+    <div id="grid"></div>
+    <img id="watermark" src="../assets/logo/mark.png">
+    <div id="titleScrim"></div>
+    <div id="callouts" style="position:absolute;inset:0;z-index:7"></div>
+    <div id="titles"></div>
+
+    <div id="phoneMask" class="layer" style="z-index:3">
+    <div id="phoneCam">
+      <div id="phone3d">
+        <div id="phoneShadow"></div>
+        <div id="phoneBody">
+          <div id="screen">
+            <div id="status">
+              <div class="time">9:41</div>
+              <svg width="78" height="14" viewBox="0 0 78 14"><g fill="#16211f"><rect x="0" y="9" width="3.2" height="4.5" rx="1"/><rect x="5" y="6.5" width="3.2" height="7" rx="1"/><rect x="10" y="4" width="3.2" height="9.5" rx="1"/><rect x="15" y="1.2" width="3.2" height="12.3" rx="1"/><path d="M30.5 4.2a9.6 9.6 0 0 1 13 0l-1.4 1.5a7.6 7.6 0 0 0-10.2 0zM33.2 7.1a5.6 5.6 0 0 1 7.6 0l-1.4 1.5a3.6 3.6 0 0 0-4.8 0zM37 13l-2.2-2.4a3 3 0 0 1 4.4 0z"/><rect x="51" y="1.5" width="23" height="11.5" rx="3.4" fill="none" stroke="#16211f" stroke-opacity=".45" stroke-width="1"/><rect x="53" y="3.5" width="17.5" height="7.5" rx="2"/><rect x="75.2" y="5" width="1.6" height="4.5" rx=".8" fill-opacity=".45"/></g></svg>
+            </div>
+            <div id="content"></div>
+          </div>
+          <div id="island"></div>
+        </div>
+        <div id="pieces"></div>
+        <div id="overlay"></div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- 4 · LOGO -->
+  <div id="logo" class="layer">
+    <div id="logoRig">
+      <div id="markGlow"></div>
+      <div id="shocks"></div>
+      <div id="petals"></div>
+      <img class="lp" id="wmText" src="../assets/logo/wordmark_text.png">
+      <img class="lp" id="wmSwoosh" src="../assets/logo/wordmark_swoosh.png">
+      <div id="sweep"></div>
+      <img class="lp" id="desc" src="../assets/logo/descriptor.png">
+      <img class="lp" id="tag" src="../assets/logo/tagline.png">
+      <div id="cta">
+        <svg width="54" height="54" viewBox="0 0 24 24"><path fill="#FA7A11" d="M12 2.2a7.3 7.3 0 0 0-7.3 7.3c0 5.2 6.2 11.6 6.5 11.9.4.4 1.1.4 1.5 0 .3-.3 6.6-6.7 6.6-11.9A7.3 7.3 0 0 0 12 2.2z"/><circle cx="12" cy="9.5" r="2.7" fill="#002C69"/></svg>
+        <div><div class="l1">Visit Meriva Medical Centre</div><div class="l2">COIMBATORE</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="iris"></div>
+  <div id="flash"></div>
+  <div id="vignette"></div>
+  <div id="grain"></div>
+  <div class="corner" id="c0" style="left:40px;top:40px;border-left-width:3px;border-top-width:3px"></div>
+  <div class="corner" id="c1" style="right:40px;top:40px;border-right-width:3px;border-top-width:3px"></div>
+  <div class="corner" id="c2" style="left:40px;bottom:40px;border-left-width:3px;border-bottom-width:3px"></div>
+  <div class="corner" id="c3" style="right:40px;bottom:40px;border-right-width:3px;border-bottom-width:3px"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// Deterministic motion: render(t) sets every style from t alone. 120 BPM.
+// ═══════════════════════════════════════════════════════════════════════════
+const BEAT = 0.5, DUR = 15;
+const $ = (s) => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, x) => a + (b - a) * x;
+const P = (t, a, b) => clamp((t - a) / (b - a));
+const E = {
+  lin: x => x,
+  oCub: x => 1 - Math.pow(1 - x, 3),
+  iCub: x => x * x * x,
+  ioCub: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  oQuint: x => 1 - Math.pow(1 - x, 5),
+  oExpo: x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x),
+  iExpo: x => x <= 0 ? 0 : Math.pow(2, 10 * x - 10),
+  ioExpo: x => x <= 0 ? 0 : x >= 1 ? 1 : x < .5 ? Math.pow(2, 20 * x - 10) / 2 : (2 - Math.pow(2, -20 * x + 10)) / 2,
+  oBack: x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); },
+  spring: x => x >= 1 ? 1 : 1 - Math.exp(-7 * x) * Math.cos(2.6 * Math.PI * x),
+};
+const tw = (t, a, b, v0, v1, e = E.oCub) => lerp(v0, v1, e(P(t, a, b)));
+// keyframes: [[t, v], [t, v, ease], ...] — ease belongs to the segment arriving at that key
+function kf(t, keys) {
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 1; i < keys.length; i++) {
+    const [t1, v1, e] = keys[i];
+    if (t <= t1) { const [t0, v0] = keys[i - 1]; const x = (e || E.ioCub)(P(t, t0, t1));
+      return Array.isArray(v0) ? v0.map((a, j) => lerp(a, v1[j], x)) : lerp(v0, v1, x); }
+  }
+  return keys[keys.length - 1][1];
+}
+function hash(n) { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); }
+function vnoise(x) { const i = Math.floor(x), f = x - i, u = f * f * (3 - 2 * f); return lerp(hash(i), hash(i + 1), u) * 2 - 1; }
+function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+const css = (el, o) => { for (const k in o) el.style[k] = o[k]; };
+const vis = (el, on) => { el.style.display = on ? '' : 'none'; };
+
+// ── assets ────────────────────────────────────────────────────────────────
+const SCR = '../assets/screens/';
+const SCREENS = ['home', 'home_labhover', 'lab', 'family_sheet', 'family_switched', 'book_spec', 'book_doc',
+  'book_slot', 'book_slot_hover', 'book_confirm_hover', 'book_done'];
+const PETALS = [[193,47,247,131],[146,92,205,145],[234,92,294,146],[198,135,242,179],[123,137,195,178],[245,137,317,178],[146,168,205,220],[235,169,293,220],[193,182,246,255]];
+const CROSS = 3, PETAL_ORDER = [0, 2, 5, 7, 8, 6, 4, 1];   // clockwise from the top
+const LK = 2.35, LX = 540, LY0 = 420;                          // logo source px -> canvas
+const lx = sx => LX + (sx - 220) * LK, ly = sy => LY0 + (sy - 46) * LK;
+
+// ── timeline constants (seconds; every hit sits on the 120 BPM grid) ─────────
+const HOOK_BG = '#081f47';
+const HOOK_WORDS = [['HEALTHCARE', 0.0, [-1, 0]], ["SHOULDN'T", 0.5, [1, 0]], ['FEEL', 1.0, [0, -1]], ['THIS', 1.5, [0, 1]], ['HARD.', 2.0, [0, 0]]];
+const CLICKS = [5.5, 6.5, 7.0, 8.5, 10.5, 11.0];
+const ASSEMBLY = [ // [name, x, y, w, h, land, from:[dx,dy,rot,scale]]
+  ['header', 0, 0, 390, 65, 3.375, [0, -240, 0, 1]],
+  ['greet', 0, 76, 390, 76, 3.5, [-430, 0, -7, 1]],
+  ['nextLabel', 20, 172, 200, 26, 3.5625, [0, -80, 0, 1]],
+  ['apptCard', 16, 201, 358, 205, 3.625, [0, 30, 0, 1.45]],
+  ['healthLabel', 20, 428, 200, 26, 3.75, [-200, 0, 0, 1]],
+  ['meds', 16, 456, 358, 86, 3.875, [470, 60, 9, 1]],
+  ['lab', 16, 544, 358, 86, 4.0, [-470, 60, -9, 1]],
+  ['follow', 16, 632, 358, 86, 4.125, [470, 60, 9, 1]],
+  ['pay', 16, 720, 358, 67, 4.25, [-470, 60, -9, 1]],
+  ['nav', 0, 787, 390, 57, 4.375, [0, 220, 0, 1]],
+];
+const TITLES = [ // tag, big word, sub, in(land), out, cinzel
+  ['INTRODUCING THE', 'MERIVA APP', 'Your clinic, in your pocket.', 3.0, 5.75, true],
+  ['01 — BOOKING', 'BOOK.', "Pick a time. You're confirmed.", 6.0, 7.75],
+  ['02 — LAB REPORTS', 'REPORTS.', 'Every result, with its range.', 8.0, 9.75],
+  ['03 — FAMILY', 'FAMILY.', 'Everyone you care for, one app.', 10.0, 11.625],
+];
+
+// ── build DOM ─────────────────────────────────────────────────────────────
+const content = $('#content'), pieces = $('#pieces'), overlay = $('#overlay');
+const scr = {};
+for (const n of SCREENS) { const im = new Image(); im.src = SCR + n + '.png'; im.className = 'scr'; content.appendChild(im); scr[n] = im; }
+// scrollable home: real full-page capture under the sticky header + fixed tab bar
+const homeScroll = document.createElement('div'); homeScroll.id = 'homeScroll';
+homeScroll.innerHTML = `<img class="full" src="${SCR}home_full.png">
+  <div class="crop" style="left:0;top:0;width:390px;height:65px;background-image:url(${SCR}home.png);background-position:0 0"></div>
+  <div class="crop" style="left:0;top:787px;width:390px;height:57px;background-image:url(${SCR}home.png);background-position:0 -787px"></div>`;
+content.appendChild(homeScroll);
+// bottom sheet pieces for the family switcher
+const sheetTop = document.createElement('div'), sheetPanel = document.createElement('div');
+for (const [el, y, h] of [[sheetTop, 0, 370], [sheetPanel, 370, 474]]) {
+  el.className = 'crop'; css(el, { left: '0px', top: y + 'px', width: '390px', height: h + 'px', backgroundImage: `url(${SCR}family_sheet.png)`, backgroundPosition: `0 ${-y}px` });
+  content.appendChild(el);
+}
+const pieceEls = ASSEMBLY.map(([n, x, y, w, h]) => {
+  const d = document.createElement('div'); d.className = 'crop';
+  css(d, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px', backgroundImage: `url(${SCR}home.png)`, backgroundPosition: `${-x}px ${-y}px`, transformOrigin: '50% 50%' });
+  pieces.appendChild(d); return d;
+});
+// press overlay, ripples, highlight ring, confetti, cursor
+const press = document.createElement('div'); press.className = 'press'; overlay.appendChild(press);
+const ripples = CLICKS.map(() => { const r = document.createElement('div'); r.className = 'ripple'; overlay.appendChild(r); return r; });
+const hl = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); hl.setAttribute('class', 'hl'); hl.setAttribute('width', 400); hl.setAttribute('height', 860);
+hl.innerHTML = `<rect id="hlRect" fill="rgba(250,122,17,.08)" stroke="#FA7A11" stroke-width="3.5" rx="12" pathLength="100" stroke-dasharray="100" />`;
+overlay.appendChild(hl);
+const confetti = []; { const r = rng(7);
+  for (let i = 0; i < 26; i++) { const im = new Image(); im.src = `../assets/logo/petal_${[0,1,2,4,5,6,7,8][i % 8]}.png`; im.className = 'confetti'; overlay.appendChild(im);
+    const a = -Math.PI / 2 + (r() - .5) * 3.0, sp = 420 + r() * 620;
+    confetti.push({ el: im, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, rot: (r() - .5) * 900, s: 0.045 + r() * 0.05, d: r() * .08 }); } }
+const calloutEls = [0, 1].map(() => { const d = document.createElement('div'); d.className = 'callout'; $('#callouts').appendChild(d); return d; });
+const cursor = document.createElement('div'); cursor.id = 'cursor';
+cursor.innerHTML = `<svg width="34" height="46" viewBox="0 0 34 46"><path d="M3 2.5v35.2l9.2-8.6 6.1 13.6 6.8-3-6-13.4h12.6z" fill="#fff" stroke="#002C69" stroke-width="2.6" stroke-linejoin="round"/></svg>`;
+overlay.appendChild(cursor);
+
+// hook words
+const hookStack = $('#hookStack');
+const hookEls = HOOK_WORDS.map(([w], i) => { const d = document.createElement('div'); d.className = 'hw' + (i === 4 ? ' accent' : ''); d.textContent = w; hookStack.appendChild(d); return d; });
+
+// titles
+const titleEls = TITLES.map(([tag, big, sub, , , cin]) => {
+  const g = document.createElement('div'); g.className = 'title';
+  const letters = [...big].map(ch => ch === '.' ? `<span class="dot">.</span>` : ch === ' ' ? `<span>&nbsp;</span>` : `<span>${ch}</span>`).join('');
+  g.innerHTML = `<div class="tag">${tag}</div><div class="bigRow"><div class="big${cin ? ' cinzel' : ''}">${letters}</div></div><div class="sub">${sub}</div>`;
+  $('#titles').appendChild(g); return g;
+});
+
+// logo petals + rings
+const petalEls = PETALS.map((b, i) => { const im = new Image(); im.src = `../assets/logo/petal_${i}.png`; im.className = 'lp';
+  css(im, { left: lx(b[0]) + 'px', top: ly(b[1]) + 'px', width: (b[2] - b[0]) * LK + 'px', height: (b[3] - b[1]) * LK + 'px', transformOrigin: '50% 50%' });
+  $('#petals').appendChild(im); return im; });
+const shocks = [0, 1, 2].map(() => { const d = document.createElement('div'); d.className = 'shock'; $('#shocks').appendChild(d); return d; });
+function placeLogo(el, b) { css(el, { left: lx(b[0]) + 'px', top: ly(b[1]) + 'px', width: (b[2] - b[0]) * LK + 'px', height: (b[3] - b[1]) * LK + 'px' }); }
+placeLogo($('#wmText'), [33, 255, 407, 324]); placeLogo($('#wmSwoosh'), [33, 255, 407, 324]); placeLogo($('#sweep'), [33, 255, 407, 324]);
+placeLogo($('#desc'), [38, 334, 401, 353]); placeLogo($('#tag'), [75, 368, 364, 392]);
+css($('#sweep'), { webkitMaskImage: 'url(../assets/logo/wordmark_text.png)', maskImage: 'url(../assets/logo/wordmark_text.png)' });
+
+// grain
+{ const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d'); const id = g.createImageData(256, 256); const r = rng(42);
+  for (let i = 0; i < id.data.length; i += 4) { const v = r() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; }
+  g.putImageData(id, 0, 0); css($('#grain'), { backgroundImage: `url(${c.toDataURL()})`, backgroundSize: '256px 256px' }); }
+
+// ── layout that needs fonts ──────────────────────────────────────────────
+const hookLayout = [];
+function layout() {
+  // hook: justified type stack, every word fitted to 960 px
+  let y = 0; const gap = 26;
+  for (const el of hookEls) { el.style.fontSize = '100px'; const w = el.getBoundingClientRect().width; const fs = 100 * 960 / w;
+    el.style.fontSize = fs + 'px'; const h = fs * 0.70; hookLayout.push({ fs, h, y }); y += h + gap; }
+  const total = y - gap, top = (1920 - total) / 2 + 30;
+  hookEls.forEach((el, i) => { const L = hookLayout[i]; L.top = top + L.y; el.style.top = (L.top - L.fs * 0.1585) + 'px'; });
+  // titles: fit the big word to 940 px, cap at 230 px
+  for (const g of titleEls) { const b = g.querySelector('.big'); b.style.fontSize = '100px'; const w = b.getBoundingClientRect().width;
+    const fs = Math.min(230, 100 * 940 / w); b.style.fontSize = fs + 'px'; g.querySelector('.bigRow').style.paddingTop = (250 - fs) / 2 + 'px'; }
+  const cta = $('#cta'); cta.style.marginLeft = -cta.getBoundingClientRect().width / 2 + 'px';
+}
+
+// ── phone camera ──────────────────────────────────────────────────────────
+const S = 1.40, CENTER = [195, 398];
+// [t, [Fu, Fv, z, Cx, Cy], ease]
+// Rule: the phone's top edge never rises above y≈545, so it never runs under the titles.
+// Close-ups come from callout cards (real crops) that lift out of the screen instead.
+const CAM = [
+  [0, [195, 398, 1, 540, 1185]],
+  [5.95, [195, 398, 1, 540, 1185]],
+  [6.3, [195, 420, 1.32, 540, 1440], E.oExpo],
+  [6.62, [195, 424, 1.32, 540, 1440]],
+  [6.85, [195, 560, 1.0, 540, 1425], E.oExpo],
+  [7.06, [195, 560, 1.0, 540, 1425]],
+  [7.3, [195, 250, 1.22, 540, 1095], E.oExpo],
+  [7.8, [195, 255, 1.22, 540, 1095]],
+  [8.0, [195, 398, 1, 540, 1185], E.ioCub],
+  [8.75, [195, 398, 1, 540, 1185]],
+  [9.0, [195, 480, 1.15, 540, 1420], E.oExpo],
+  [9.6, [195, 480, 1.15, 540, 1420]],
+  [9.95, [195, 398, 1, 540, 1185], E.ioCub],
+  [10.55, [195, 398, 1, 540, 1185]],
+  [10.8, [195, 560, 1.0, 540, 1425], E.oExpo],
+  [11.06, [195, 560, 1.0, 540, 1425]],
+  [11.3, [195, 170, 1.3, 540, 980], E.oExpo],
+  [11.62, [195, 172, 1.3, 540, 980], E.lin],
+];
+// callout cards: [crop source, x, y, w, h (content px), lift start, lift end, drop start, drop end, target canvas centre y, target scale]
+const CALLOUTS = [
+  ['lab', 21, 447, 348, 70, 9.0, 9.2, 9.62, 9.85, 1075, 2.7],
+  ['family_switched', 0, 65, 390, 35, 11.28, 11.46, 11.66, 11.8, 655, 2.6],
+];
+// cursor path (tip, content px)
+const CUR = [
+  [5.10, [450, 780]], [5.42, [162, 548], E.oCub], [5.60, [162, 548]], [5.80, [200, 620], E.oCub], [6.05, [310, 650]], [6.38, [233, 420], E.oCub], [6.58, [233, 420]],
+  [6.78, [290, 600], E.oCub], [6.94, [306, 662], E.oCub], [7.08, [306, 662]], [7.40, [320, 420], E.oCub], [7.85, [330, 600]],
+  [8.33, [318, 594], E.oCub], [8.58, [318, 594]], [8.80, [330, 640], E.oCub], [9.05, [352, 508], E.oCub], [9.55, [354, 510]], [9.80, [320, 320]],
+  [10.38, [192, 40], E.oCub], [10.58, [192, 40]], [10.78, [300, 560], E.oCub], [10.94, [296, 642], E.oCub], [11.08, [296, 642]], [11.38, [340, 330], E.oCub],
+];
+const PRESS = { // click time -> [screen image, x, y, w, h, scrollOffset]
+  5.5: ['home_full', 20, 858, 170, 88, 330], 6.5: ['book_slot_hover', 139.3, 385.5, 111.4, 44, 0], 7.0: ['book_confirm_hover', 20, 623.5, 350, 52, 0],
+  8.5: ['home_labhover', 20, 548, 350, 78, 0], 10.5: ['home', 20, 13, 213, 38, 0], 11.0: ['family_sheet', 20, 594, 350, 70, 0],
+};
+// screen state machine
+const SEQ = [
+  [4.5, 'homeScroll', 'cut'], [5.625, 'book_spec', 'push', .16], [5.8125, 'book_doc', 'push', .16], [6.0, 'book_slot', 'push', .16],
+  [6.4, 'book_slot_hover', 'cut'], [6.625, 'book_confirm_hover', 'push', .22], [7.06, 'book_done', 'push', .22],
+  [7.875, 'home', 'whip', .125], [8.35, 'home_labhover', 'cut'], [8.56, 'lab', 'push', .22], [9.875, 'home', 'whip', .125],
+  [10.5, 'family_sheet', 'sheet', .3], [11.06, 'family_switched', 'unsheet', .26],
+];
+function screenEl(n) { return n === 'homeScroll' ? homeScroll : scr[n]; }
+
+// ═══════════════════════════════════════════════════════════════════════════
+function render(t) {
+  const hookOn = t < 3.0, lightOn = t >= 2.7 && t < 12.1, logoOn = t >= 11.85;
+  vis($('#hook'), hookOn); vis($('#light'), lightOn); vis($('#logo'), logoOn);
+
+  // global camera shake (hits)
+  const HITS = [[0, 10], [0.5, 12], [1.0, 14], [1.5, 16], [2.0, 34], [3.0, 10], [6.0, 7], [8.0, 7], [10.0, 7], [13.0, 22], [14.0, 8]];
+  let sx = 0, sy = 0;
+  for (const [h, a] of HITS) if (t >= h) { const k = a * Math.exp(-(t - h) * 9); sx += k * vnoise(t * 40 + h * 13); sy += k * vnoise(t * 40 + h * 29 + 100); }
+
+  // ── HOOK ───────────────────────────────────────────────────────────────
+  if (hookOn) {
+    const push = tw(t, 0, 2.6, 1, 1.07, E.lin) * tw(t, 2.55, 3.0, 1, 1.6, E.iExpo);
+    let missing = 0; HOOK_WORDS.forEach(([, T], i) => { missing += (hookLayout[i].h + 26) * (1 - E.oExpo(P(t, T - 0.08, T + 0.3))); });
+    css(hookStack, { transform: `translate(${sx}px,${sy + missing / 2}px) scale(${push})` });
+    HOOK_WORDS.forEach(([w, T, dir], i) => {
+      const el = hookEls[i], L = hookLayout[i];
+      if (t < T - 0.1) { el.style.opacity = 0; return; }
+      // fly-in during the 1/8 before the beat, slam + settle after it
+      const pre = P(t, T - 0.1, T), post = P(t, T, T + 0.45);
+      let dx = 0, dy = 0, sc = 1, skew = 0, blur = 0;
+      if (t < T) { const e = E.iCub(pre); dx = dir[0] * 1300 * (1 - e); dy = dir[1] * 900 * (1 - e); skew = -dir[0] * 25 * (1 - e); sc = i === 4 ? lerp(3.2, 1.0, E.iCub(pre)) : 1; blur = 14 * (1 - e); }
+      else { sc = 1 + (i === 4 ? .22 : .12) * (1 - E.spring(post)); skew = -dir[0] * 8 * (1 - E.oExpo(post)); dx = dir[0] * -14 * (1 - E.oExpo(post)); }
+      if (T === 0 && t < 0.0001) { sc = 1.12; }
+      // exit: alternate directions, accelerate out
+      const ex = E.iExpo(P(t, 2.6 + i * 0.03, 2.95));
+      dx += (i % 2 ? 1 : -1) * 1400 * ex; skew += (i % 2 ? -1 : 1) * 20 * ex;
+      // the newest word is solid; earlier words flip to a white outline on the next beat
+      const newest = HOOK_WORDS.filter(([, T2]) => t >= T2).length - 1;
+      const solid = i === newest || i === 4;
+      el.style.opacity = 1;
+      // stroke painted under a background-coloured fill, so overlapping glyph contours stay hidden
+      el.style.color = solid ? '' : HOOK_BG;
+      el.style.paintOrder = 'stroke fill';
+      el.style.webkitTextStroke = solid ? '0px transparent' : `${2 * Math.max(2.5, L.fs * 0.012)}px rgba(255,255,255,.92)`;
+      const ca = i === 4 ? 26 * Math.exp(-(t - 2.0) * 7) * (t >= 2 ? 1 : 0) : 6 * Math.exp(-(t - T) * 10) * (t >= T ? 1 : 0);
+      css(el, { transform: `translate(${dx}px,${dy}px) scale(${sc}) skewX(${skew}deg)`, filter: blur > .2 ? `blur(${blur}px)` : 'none',
+        textShadow: ca > .3 ? `${ca}px 0 rgba(255,40,60,.75), ${-ca}px 0 rgba(30,200,255,.75)` : 'none' });
+    });
+    $('#hookGlow').style.opacity = (t >= 2 ? .9 * Math.exp(-(t - 2) * 3.2) : 0) + .12 * Math.max(0, ...HOOK_WORDS.slice(0, 4).map(([, T]) => t >= T ? Math.exp(-(t - T) * 8) : 0));
+    $('#hookLabel').style.opacity = tw(t, 0, .3, 0, 1) * (1 - P(t, 2.5, 2.8));
+  }
+
+  // ── LIGHT WORLD ────────────────────────────────────────────────────────
+  if (lightOn) {
+    // iris reveal from the hook
+    const ir = t < 3.0 ? E.iExpo(P(t, 2.7, 3.0)) * 1150 + 2 : 3000;
+    $('#light').style.clipPath = t < 3.0 ? `circle(${ir}px at 540px 960px)` : 'none';
+    css($('#iris'), { display: t > 2.7 && t < 3.2 ? 'block' : 'none', width: ir * 2 + 'px', height: ir * 2 + 'px', marginLeft: -ir + 'px', marginTop: -ir + 'px', opacity: t < 3.0 ? 1 : 1 - P(t, 3.0, 3.2), borderWidth: lerp(10, 40, P(t, 2.85, 3.1)) + 'px' });
+
+    const drift = t * 0.6;
+    css($('#blobA'), { left: -330 + 60 * Math.sin(drift) + 'px', top: 60 + 50 * Math.cos(drift * .8) + 'px', opacity: .2 });
+    css($('#blobB'), { left: 560 + 60 * Math.cos(drift * .9) + 'px', top: 1260 + 60 * Math.sin(drift) + 'px', opacity: .2 });
+    css($('#blobC'), { left: 640 + 40 * Math.sin(drift * 1.3) + 'px', top: -120 + 40 * Math.cos(drift) + 'px', opacity: .16 });
+    css($('#watermark'), { transform: `rotate(${t * 6}deg) scale(${1 + .03 * Math.sin(t)})` });
+    css($('#grid'), { transform: `translateY(${-t * 14}px)` });
+
+    // titles
+    let scrim = 0;
+    TITLES.forEach(([, , , tin, tout], i) => {
+      const g = titleEls[i]; const on = t >= tin - 0.2 && t < tout + 0.3; vis(g, on); if (!on) return;
+      const letters = g.querySelectorAll('.big span'); const n = letters.length;
+      letters.forEach((s, j) => {
+        const a = tin - 0.14 + j * (0.12 / n), inP = E.oExpo(P(t, a, a + 0.32)), outP = E.iExpo(P(t, tout + j * 0.012, tout + 0.16 + j * 0.012));
+        s.style.transform = `translateY(${(1 - inP) * 115 - outP * 115}%) rotate(${(1 - inP) * 8}deg)`;
+      });
+      const tg = g.querySelector('.tag'), sb = g.querySelector('.sub');
+      const tagIn = E.oExpo(P(t, tin - 0.1, tin + 0.3)), out = E.iCub(P(t, tout, tout + 0.18));
+      css(tg, { opacity: tagIn * (1 - out), transform: `translateY(${(1 - tagIn) * 24 - out * 30}px)`, letterSpacing: lerp(.8, .34, tagIn) + 'em' });
+      const subIn = E.oExpo(P(t, tin + 0.12, tin + 0.5));
+      css(sb, { opacity: subIn * (1 - out), transform: `translateY(${(1 - subIn) * 30 - out * 30}px)`, filter: `blur(${(1 - subIn) * 8}px)` });
+      scrim = Math.max(scrim, P(t, tin - .2, tin));
+    });
+
+    // phone camera
+    let [Fu, Fv, z, Cx, Cy] = kf(t, CAM);
+    // entrance 3.0–3.5, exit 11.62–12.0
+    const ent = E.oExpo(P(t, 2.95, 3.5)), ex = E.iExpo(P(t, 11.62, 11.98));
+    Cy += (1 - ent) * 1500 - ex * 1300; z *= lerp(.8, 1, ent) * lerp(1, .55, ex);
+    const s = S * z;
+    css($('#phoneCam'), { transform: `translate(${Cx - s * Fu + sx * .6}px,${Cy - s * Fv + sy * .6}px) scale(${s})` });
+    const float = Math.sin(t * 2.2) * 1.2 * (1 - P(t, 5.9, 6.1)) * P(t, 4.4, 4.8);
+    css($('#phone3d'), { transform: `perspective(1800px) rotateX(${(1 - ent) * 38 + ex * -25}deg) rotateZ(${(1 - ent) * -12 + ex * 18 + float}deg)`, opacity: 1 - P(t, 11.85, 11.98) });
+    $('#phoneShadow').style.opacity = .55 * ent;
+
+    // screens
+    for (const n of SCREENS) { scr[n].style.display = 'none'; scr[n].style.transform = ''; scr[n].style.filter = ''; }
+    homeScroll.style.display = 'none'; homeScroll.style.transform = ''; homeScroll.style.filter = '';
+    sheetTop.style.display = sheetPanel.style.display = 'none';
+    const scrollY = tw(t, 4.6, 5.3, 0, 330, E.ioCub);
+    homeScroll.querySelector('.full').style.transform = `translateY(${-scrollY}px)`;
+    let cur = null, ev = null;
+    for (const e of SEQ) if (t >= e[0]) { ev = e; }
+    if (ev) {
+      const idx = SEQ.indexOf(ev); const prev = idx > 0 ? SEQ[idx - 1][1] : null; const [t0, to, kind, d] = ev; const p = d ? P(t, t0, t0 + d) : 1;
+      const A = prev && screenEl(prev), B = screenEl(to);
+      B.style.display = 'block';
+      if (p < 1 && A && kind === 'push') { A.style.display = 'block'; const e = E.oQuint(p);
+        A.style.transform = `translateX(${-120 * e}px)`; A.style.filter = `brightness(${1 - .12 * e})`; B.style.transform = `translateX(${390 * (1 - e)}px)`;
+        B.style.boxShadow = '-12px 0 30px rgba(0,0,0,.12)'; }
+      else if (p < 1 && A && kind === 'whip') { A.style.display = 'block'; const e = E.ioCub(p);
+        A.style.transform = `translateX(${-390 * e}px)`; B.style.transform = `translateX(${390 * (1 - e)}px)`;
+        const bl = 10 * Math.sin(Math.PI * p); A.style.filter = B.style.filter = `blur(${bl}px)`; }
+      else if (kind === 'sheet') { B.style.display = 'none'; scr.home.style.display = 'block'; sheetTop.style.display = sheetPanel.style.display = 'block';
+        const e = E.oQuint(p); sheetTop.style.opacity = e; sheetPanel.style.transform = `translateY(${474 * (1 - e)}px)`; sheetPanel.style.opacity = 1; }
+      else if (kind === 'unsheet' && p < 1) { sheetTop.style.display = sheetPanel.style.display = 'block'; const e = E.ioCub(p);
+        sheetTop.style.opacity = 1 - e; sheetPanel.style.transform = `translateY(${474 * e}px)`; }
+      for (const im of [A, B]) if (im && im !== B) im.style.boxShadow = '';
+      if (p >= 1) B.style.boxShadow = '';
+    }
+
+    // assembly (3.0–4.5): real crops of the home screen fly into place
+    const asm = t < 4.5;
+    pieces.style.display = asm ? 'block' : 'none';
+    if (asm) ASSEMBLY.forEach(([n, x, y, w, h, land, [dx, dy, rot, sc]], i) => {
+      const el = pieceEls[i]; const p = P(t, land - 0.34, land);
+      const e = n === 'apptCard' ? E.oBack(p) : E.oQuint(p);
+      el.style.opacity = t < land - 0.34 ? 0 : clamp(p * 4);
+      el.style.transform = `translate(${dx * (1 - e)}px,${dy * (1 - e)}px) rotate(${rot * (1 - e)}deg) scale(${lerp(sc, 1, e) * (1 + .06 * Math.exp(-(t - land) * 18) * (t > land ? 1 : 0))})`;
+      el.style.boxShadow = `0 ${30 * (1 - p)}px ${60 * (1 - p)}px rgba(0,30,80,${.35 * (1 - p)})`;
+    });
+
+    // cursor
+    const cOn = t > 5.05 && t < 11.6; vis(cursor, cOn);
+    if (cOn) { const [u, v] = kf(t, CUR); let cs = 1; for (const c of CLICKS) if (Math.abs(t - c) < .12) cs = Math.min(cs, 1 - .22 * Math.cos((t - c) / .12 * Math.PI / 2));
+      css(cursor, { transform: `translate(${u - 3}px,${v - 2.5}px) scale(${cs})`, opacity: P(t, 5.05, 5.2) * (1 - P(t, 11.4, 11.6)) }); }
+    CLICKS.forEach((c, i) => { const r = ripples[i]; const p = P(t, c, c + .4); const on = t >= c && p < 1; vis(r, on); if (!on) return;
+      const [u, v] = kf(c, CUR); const R = 8 + 46 * E.oExpo(p); css(r, { left: u - R + 'px', top: v - R + 'px', width: 2 * R + 'px', height: 2 * R + 'px', opacity: 1 - p, borderWidth: lerp(4, .5, p) + 'px' }); });
+    // press: the real element dips under the finger
+    let pr = null; for (const c of CLICKS) if (t > c - .05 && t < c + .16) pr = c;
+    vis(press, !!pr);
+    if (pr) { const [src, x, y, w, h, off] = PRESS[pr]; const k = Math.sin(P(t, pr - .05, pr + .16) * Math.PI);
+      const url = src === 'home_full' ? `${SCR}home_full.png` : `${SCR}${src}.png`; const bh = src === 'home_full' ? 1924 : 844;
+      css(press, { left: x + 'px', top: (y - off) + 'px', width: w + 'px', height: h + 'px', backgroundImage: `url(${url})`, backgroundSize: `390px ${bh}px`,
+        backgroundPosition: `${-x}px ${-y}px`, transform: `scale(${1 - .05 * k})`, filter: `brightness(${1 - .1 * k})`, borderRadius: '10px', boxShadow: `0 0 0 ${2 * k}px rgba(250,122,17,.0)` });
+    }
+
+    // confetti from the confirmation check
+    const cf = t >= 7.08 && t < 7.95;
+    confetti.forEach(c => { vis(c.el, cf); if (!cf) return; const tt = Math.max(0, t - 7.08 - c.d);
+      const x = 195 + c.vx * tt, y = 133 + c.vy * tt + 0.5 * 1500 * tt * tt;
+      css(c.el, { transform: `translate(${x - 110}px,${y - 110}px) rotate(${c.rot * tt}deg) scale(${c.s * E.oBack(clamp(tt * 6))})`, opacity: 1 - P(t, 7.65, 7.95) }); });
+
+    // highlight ring (lab result, family band)
+    const rect = hl.querySelector('#hlRect');
+    let hon = false;
+    if (t > 8.95 && t < 9.9) { hon = true; css(rect, {}); rect.setAttribute('x', 18); rect.setAttribute('y', 444); rect.setAttribute('width', 354); rect.setAttribute('height', 76);
+      rect.style.strokeDashoffset = 100 * (1 - E.oCub(P(t, 9.0, 9.3))); rect.style.opacity = 1 - P(t, 9.7, 9.85); }
+    if (t > 11.2 && t < 11.75) { hon = true; rect.setAttribute('x', 4); rect.setAttribute('y', 66); rect.setAttribute('width', 382); rect.setAttribute('height', 34);
+      rect.style.strokeDashoffset = 100 * (1 - E.oCub(P(t, 11.25, 11.5))); rect.style.opacity = 1 - P(t, 11.6, 11.72); }
+    vis(hl, hon);
+
+    // callouts: the real crop lifts out of the screen, magnified, then drops back in
+    CALLOUTS.forEach(([src, x, y, w, h, a0, a1, b0, b1, ty, ts], i) => {
+      const el = calloutEls[i]; const on = t >= a0 && t < b1; vis(el, on); if (!on) return;
+      const up = E.oBack(P(t, a0, a1)), down = E.iCub(P(t, b0, b1)), k = up * (1 - down);
+      // where the crop sits right now inside the phone, in canvas px
+      const [Fu, Fv, z, Cx, Cy] = kf(t, CAM); const sp = S * z;
+      const px = Cx + sp * (x + w / 2 - Fu), py = Cy + sp * (y + h / 2 - Fv);
+      const cx = lerp(px, 540, k), cy = lerp(py, ty, k), sc = lerp(sp, ts, k);
+      css(el, { width: w + 'px', height: h + 'px', backgroundImage: `url(${SCR}${src}.png)`, backgroundPosition: `${-x}px ${-y}px`,
+        transform: `translate(${cx - w / 2}px,${cy - h / 2}px) scale(${sc})`, opacity: clamp(k * 3),
+        boxShadow: `0 ${18 * k}px ${40 * k}px rgba(0,30,80,${.32 * k}), 0 0 0 ${2.2 * k}px #FA7A11` });
+    });
+  }
+
+  // ── LOGO ───────────────────────────────────────────────────────────────
+  if (logoOn) {
+    $('#logo').style.opacity = P(t, 11.85, 12.0);
+    css($('#logoRig'), { transform: `translate(${sx}px,${sy}px) scale(${tw(t, 12, 15, 1.0, 1.045, E.lin) * (1 + .02 * Math.exp(-(t - 13) * 8) * (t >= 13 ? 1 : 0))})` });
+    // petals spiral in on 16ths: 12.25 … 12.6875
+    PETAL_ORDER.forEach((pi, j) => {
+      const el = petalEls[pi], b = PETALS[pi]; const land = 12.25 + j * 0.0625; const p = P(t, land - 0.4, land);
+      const cx = (b[0] + b[2]) / 2 - 219.5, cy = (b[1] + b[3]) / 2 - 151; const L = Math.hypot(cx, cy) || 1; const ux = cx / L, uy = cy / L;
+      const e = E.oQuint(p); const far = 1 - e; const swirl = 0.9 * far;
+      const ox = (ux * Math.cos(swirl) - uy * Math.sin(swirl)) * 1100 * far, oy = (ux * Math.sin(swirl) + uy * Math.cos(swirl)) * 1100 * far;
+      const settle = t > land ? 1 + .14 * Math.exp(-(t - land) * 14) : 1;
+      css(el, { opacity: clamp(p * 3), transform: `translate(${ox}px,${oy}px) rotate(${-260 * far}deg) scale(${lerp(.35, 1, e) * settle})` });
+    });
+    { // the cross lands on the downbeat of bar 7 (13.0)
+      const el = petalEls[CROSS]; const p = P(t, 12.72, 13.0); const e = E.iCub(p);
+      css(el, { opacity: clamp(p * 4), transform: `scale(${t < 13 ? lerp(5, 1, e) : 1 + .25 * (1 - E.spring(P(t, 13, 13.5)))}) rotate(${(1 - e) * 90}deg)`, filter: t < 13 ? `blur(${(1 - e) * 10}px)` : 'none' }); }
+    const g = t >= 13 ? Math.exp(-(t - 13) * 2.4) : 0;
+    css($('#markGlow'), { opacity: g * .9 + .12 * P(t, 13, 13.6), transform: `scale(${1 + 1.3 * (1 - Math.exp(-(t - 13) * 3)) * (t >= 13 ? 1 : 0)})` });
+    shocks.forEach((sh, i) => { const st = 13 + i * 0.07; const p = P(t, st, st + .7); const R = 120 + 720 * E.oExpo(p);
+      css(sh, { left: 540 - R + 'px', top: ly(151) - R + 'px', width: 2 * R + 'px', height: 2 * R + 'px', opacity: t >= st ? (1 - p) * .8 : 0, borderWidth: lerp(10, 1, p) + 'px', borderColor: i === 1 ? '#1E8DD2' : '#FA7A11' }); });
+    // wordmark: tracks in from wide + sharpens, then the swoosh paints across the A
+    const w = E.oExpo(P(t, 13.0, 13.45));
+    css($('#wmText'), { opacity: w, transform: `translateY(${(1 - w) * 40}px) scaleX(${lerp(1.18, 1, w)})`, filter: `blur(${(1 - w) * 12}px)`, clipPath: `inset(0 ${50 * (1 - w)}% 0 ${50 * (1 - w)}%)` });
+    const sw = E.ioCub(P(t, 13.3, 13.62));
+    css($('#wmSwoosh'), { opacity: 1, clipPath: `inset(0 ${100 - lerp(80, 100, sw)}% 0 0)` });
+    if (t < 13.3) $('#wmSwoosh').style.opacity = 0;
+    const sp = P(t, 14.25, 14.85); css($('#sweep'), { opacity: sp > 0 && sp < 1 ? 1 : 0, backgroundPosition: `${lerp(120, -20, E.ioCub(sp))}% 0` });
+    const d = E.oExpo(P(t, 13.45, 13.85));
+    css($('#desc'), { clipPath: `inset(0 ${50 * (1 - d)}% 0 ${50 * (1 - d)}%)`, opacity: d });
+    const tg = E.oExpo(P(t, 13.7, 14.15));
+    css($('#tag'), { opacity: tg, transform: `translateY(${(1 - tg) * 26}px)`, filter: `blur(${(1 - tg) * 8}px)` });
+    const c = P(t, 13.9, 14.25);
+    css($('#cta'), { opacity: clamp(c * 3), transform: `translateY(${(1 - E.oExpo(c)) * 60}px) scale(${t < 14.25 ? lerp(.7, 1, E.oBack(c)) : 1 + .05 * Math.exp(-(t - 14.25) * 10) * Math.cos((t - 14.25) * 30)})` });
+    const pin = $('#cta svg'); pin.style.transform = `translateY(${-14 * Math.abs(Math.sin(P(t, 14.0, 14.55) * Math.PI)) * (1 - P(t, 14, 14.55))}px)`;
+  }
+
+  // ── FX ─────────────────────────────────────────────────────────────────
+  const FL = [[2.0, .35], [3.0, .55], [11.98, .9]];
+  let fl = 0; for (const [h, a] of FL) if (t >= h) fl += a * Math.exp(-(t - h) * 12);
+  $('#flash').style.opacity = Math.min(1, fl);
+  const fi = Math.floor(t * 60); css($('#grain'), { transform: `translate(${-hash(fi) * 64}px,${-hash(fi + 99) * 64}px)`, opacity: hookOn ? .1 : .05 });
+  $('#vignette').style.opacity = hookOn ? 1 : .45;
+  const cornersOn = t >= 3.0 && t < 11.8; const co = P(t, 3.0, 3.4) * (1 - P(t, 11.6, 11.8));
+  for (let i = 0; i < 4; i++) { const el = $('#c' + i); el.style.opacity = cornersOn ? co : (hookOn ? .7 : 0); el.style.borderColor = hookOn ? 'rgba(255,255,255,.3)' : 'rgba(0,44,105,.35)'; }
+}
+
+window.ready = (async () => {
+  await document.fonts.load('900 100px Mont'); await document.fonts.load('600 100px Cinzel'); await document.fonts.load('italic 600 50px Corm');
+  await document.fonts.load('700 40px Mont'); await document.fonts.load('600 16px Inter'); await document.fonts.load('700 28px Mont');
+  await document.fonts.ready;
+  await Promise.all([...document.images].map(im => im.decode().catch(() => {})));
+  layout(); render(0); return true;
+})();
+window.render = render; window.DUR = DUR;
+</script>
+</body>
+</html>

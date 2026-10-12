@@ -1,0 +1,12 @@
+{
+  "name": "meriva-launch-video",
+  "private": true,
+  "type": "module",
+  "description": "15s 1080x1920 launch video for Meriva Medical Centre. Deterministic HTML composition rendered frame-by-frame with Playwright; music synthesized in Python.",
+  "scripts": {
+    "music": "python3 music.py out/music.wav",
+    "sheet": "node render.mjs sheet",
+    "render": "node render.mjs video"
+  },
+  "devDependencies": { "playwright": "1.56.1" }
+}
