@@ -78,6 +78,7 @@ All demo data is fictional. No real person's medical information appears anywher
 | [`docs/07-security-privacy-and-storage.md`](docs/07-security-privacy-and-storage.md) | Threat model, risk register, file storage, regulatory posture |
 | [`docs/08-mvp-and-roadmap.md`](docs/08-mvp-and-roadmap.md) | MVP definition, phases, and the 12 requirements the brief left open |
 | [`docs/09-project-structure.md`](docs/09-project-structure.md) | Folder layout and the layering rule |
+| [`docs/10-meriva-build-prompt.md`](docs/10-meriva-build-prompt.md) | A build-ready prompt that recreates the whole platform as Meriva Medical Centre: brand, screens, flows, data, API, design system, acceptance criteria, and known defects to fix |
 
 ### Stack
 
