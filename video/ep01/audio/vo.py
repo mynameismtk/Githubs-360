@@ -2,7 +2,7 @@
 # target time, so the read fits 25 s without speeding the voice up. Writes vo.wav, vo.json and captions.srt.
 import json, subprocess, numpy as np, soundfile as sf
 SR = 48000
-src = 'vo_take.mp3'
+src = 'vo_take.ogg'
 subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', src, '-ac', '1', '-ar', str(SR), 'vo_src.wav'], check=True)
 x, _ = sf.read('vo_src.wav')
 

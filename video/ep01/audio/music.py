@@ -1,5 +1,5 @@
-# Original score + sound design for the 25 s cut, synthesized from scratch (no samples beyond the house SFX
-# library's typing / whoosh / chime files). Writes music.wav (score + SFX, no voice) and mix.wav (with voice,
+# Original score + sound design for the 25 s cut, synthesized from scratch - every sound, keys and
+# whooshes included, is generated here (no samples). Writes music.wav (score + SFX, no voice) and mix.wav (with voice,
 # ducked). Cue map (seconds):
 #   0.0-7.0  office ambience, keyboard, restrained low pulse (A minor, 96 BPM), tightening
 #   6.85-7.25 a breath of silence
@@ -34,11 +34,36 @@ def hp(x, fc, order=2):
 
 def hz(m): return 440 * 2 ** ((m - 69) / 12)
 
-def load(path, gain=1.0):
-    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', path, '-ac', '1', '-ar', str(SR), '/tmp/_s.wav'], check=True)
-    y, _ = sf.read('/tmp/_s.wav'); return y * gain
-
 def xfade(a, b, x): return a * (1 - x) + b * x
+
+
+# ---- synthesized foley (no samples) ----
+def keys(ln, seed=3):
+    r = np.random.default_rng(seed); n = int(ln * SR); y = np.zeros(n); i = 0
+    while i < n - int(0.03 * SR):
+        m = int(0.025 * SR); tt = np.arange(m) / SR
+        click = hp(r.standard_normal(m), 1800) * np.exp(-tt * 260) * r.uniform(0.35, 0.8)
+        thock = np.sin(2 * np.pi * r.uniform(180, 260) * tt) * np.exp(-tt * 90) * 0.25
+        y[i:i + m] += click + thock
+        i += int(r.uniform(0.055, 0.15) * SR)
+    return y * 0.9
+
+def whoosh(ln=0.55, lo=400, hi=4200, seed=5):
+    r = np.random.default_rng(seed); n = int(ln * SR); tt = np.arange(n) / SR
+    noise = r.standard_normal(n); y = np.zeros(n); k = 12
+    for j in range(k):  # a band that sweeps upward, built from crossfaded filtered slices
+        fc = lo * (hi / lo) ** (j / (k - 1))
+        w = np.exp(-0.5 * ((tt / ln - j / (k - 1)) / 0.12) ** 2)
+        y += lp(hp(noise, fc * 0.5), fc) * w
+    env = np.sin(np.pi * np.clip(tt / ln, 0, 1)) ** 2
+    return y * env / (np.abs(y).max() + 1e-9)
+
+def sparkle_swoosh(ln=1.1):
+    y = whoosh(ln, 300, 6000, 9) * 0.8; tt = np.arange(len(y)) / SR
+    for f0, at in [(2637, 0.45), (3136, 0.6), (3951, 0.75)]:
+        g = np.sin(2 * np.pi * f0 * tt) * np.exp(-np.clip(tt - at, 0, None) * 9) * (tt >= at) * 0.25
+        y += g
+    return y
 
 # ---- office ambience: band-limited room noise + distant HVAC hum, 0-7 s, then gone ----
 room = lp(hp(rng.standard_normal(N), 120), 1800) * 0.018
@@ -46,8 +71,8 @@ room += np.sin(2 * np.pi * 100 * t) * 0.002
 amb = room * np.clip(np.minimum(t / 0.05, (6.85 - t) / 0.15), 0, 1)
 add(amb, 0, 0, 1.0); add(lp(rng.standard_normal(N), 900) * 0.006 * np.clip((6.85 - t) / 0.15, 0, 1), 0, 0.4)
 
-# ---- keyboard: real typing take from the SFX library, placed on the pattern beats ----
-typ = load('sfx/typing.wav')
+# ---- keyboard: synthesized key clicks, placed on the pattern beats ----
+typ = keys(1.6)
 for at, ln, g, p in [(0.0, 1.4, 0.35, -0.3), (3.0, 1.45, 0.55, -0.2), (4.55, 1.0, 0.6, 0.2), (5.65, 0.7, 0.5, -0.1)]:
     seg = typ[:int(ln * SR)].copy(); f = int(0.03 * SR); seg[-f:] *= np.linspace(1, 0, f)
     add(seg, at, p, g)
@@ -115,9 +140,9 @@ def bell(m, v=0.5, ln=3.0):
     s = np.sin(2 * np.pi * f * tt) * np.exp(-tt * 2.2) + 0.4 * np.sin(2 * np.pi * f * 2.76 * tt) * np.exp(-tt * 5) + 0.2 * np.sin(2 * np.pi * f * 5.4 * tt) * np.exp(-tt * 9)
     return s * np.minimum(1, tt / 0.002) * v * 0.12
 add(bell(79, 0.6), 17.75, -0.3); add(bell(84, 0.6), 17.95, 0.3); add(bell(88, 0.7), 18.15, 0)
-add(load('sfx/reveal_swoosh_soft.wav', 0.35), 17.25, 0)
+add(sparkle_swoosh() * 0.3, 17.25, 0)
 # soft transition sounds: match cut into the clinic (11.0) and into the white brand world (17.0)
-wh = load('sfx/whoosh.wav', 0.22)
+wh = whoosh() * 0.22
 add(wh, 10.75, 0); add(wh * 0.8, 16.75, 0)
 # end card: one last high bell as the CTA settles
 add(bell(84, 0.45, 2.5), 22.05, 0)

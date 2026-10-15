@@ -1,0 +1,4 @@
+public/mix.wav
+audio/*.wav
+audio/__pycache__/
+stills.mjs.bak

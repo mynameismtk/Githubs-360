@@ -1,8 +1,11 @@
-import {loadFont as loadOswald} from '@remotion/google-fonts/Oswald';
-import {loadFont as loadInter} from '@remotion/google-fonts/Inter';
+import {loadFont} from '@remotion/fonts';
+import {staticFile} from 'remotion';
 
-export const {fontFamily: DISPLAY} = loadOswald('normal', {weights: ['500', '600', '700'], subsets: ['latin']});
-export const {fontFamily: BODY} = loadInter('normal', {weights: ['500', '600', '700', '800'], subsets: ['latin']});
+// Oswald and Inter (variable, latin) are bundled in public/fonts so a render needs no network.
+export const DISPLAY = 'Oswald';
+export const BODY = 'Inter';
+loadFont({family: DISPLAY, url: staticFile('fonts/Oswald.woff2'), weight: '200 700', format: 'woff2'});
+loadFont({family: BODY, url: staticFile('fonts/Inter.woff2'), weight: '100 900', format: 'woff2'});
 
 // Campaign palette from the brief. The logo keeps its own official navy / blue / orange.
 export const C = {

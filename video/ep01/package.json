@@ -6,15 +6,21 @@
     "audio": "cd audio && python3 vo.py && python3 music.py",
     "stills": "remotion still AdClean",
     "render": "remotion render AdClean out/meriva_ep01_clean.mp4 --codec h264 --crf 17 --x264-preset slow --audio-bitrate 256k --pixel-format yuv420p",
+    "render:code": "remotion render AdCode out/meriva_ep01_code.mp4 --codec h264 --crf 17 --x264-preset slow --audio-bitrate 256k --pixel-format yuv420p",
     "render:placeholder": "remotion render AdPlaceholder out/meriva_ep01_placeholder.mp4 --codec h264 --crf 17 --x264-preset slow --audio-bitrate 256k --pixel-format yuv420p"
   },
   "dependencies": {
     "@remotion/cli": "4.0.528",
+    "@remotion/fonts": "^4.0.528",
     "@remotion/google-fonts": "4.0.528",
     "@remotion/noise": "4.0.528",
+    "@remotion/paths": "^4.0.528",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "remotion": "4.0.528",
     "typescript": "5.9.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0"
   }
 }

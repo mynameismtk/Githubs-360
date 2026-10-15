@@ -8,6 +8,24 @@
 MP4 into the repo, so only the source and subtitles are here.
 **Subtitles:** [`final/meriva_ep01_ignored_headache.en.srt`](final/meriva_ep01_ignored_headache.en.srt)
 
+## All-code edition — [`final/meriva_ep01_code.mp4`](final/meriva_ep01_code.mp4)
+
+Same script, voice, timing, score and end card, with every picture drawn in code (`src/AdCode.tsx`,
+`src/code/Scenes.tsx`) and every sound synthesized (`audio/music.py`). No footage or photos are used.
+It's rendered in this repo. 1080×1920, 24 fps, 600 frames, 25.0 s, −15.1 LUFS, −1.0 dBTP.
+Contact sheet: [`final/contact_sheet_code.jpg`](final/contact_sheet_code.jpg).
+
+Its visual idea is **the dot**: the ignored symptom is a small magenta point. It stays at the same spot on screen through every
+office cut while the work behind it changes, and it gets bigger each time ("before it becomes big").
+
+| Time | Picture |
+|---|---|
+| 0–3 s | A white single-line profile on night purple; work notifications drift in; the dot appears at the temple |
+| 3–7 s | Match cuts — a document typing itself (WORK.), a week filling up (DEADLINES.), a clock racing (ROUTINE.) — then the work falls away and only the grown dot is left |
+| 7–11 s | The phone search (the same component as the footage cut), the dot blurred far behind it |
+| 11–17 s | A warm neighbourhood map: a short route draws from Home to Meriva Medical Centre, then Reception · Consultation · Diagnostics |
+| 17–25 s | The brand reveal and CTA, shared with the footage cut |
+
 ## Cut
 
 | Time | Shot | Picture | On screen | Sound |
@@ -31,7 +49,7 @@ being sped up. The score is synthesized from scratch (`audio/music.py`) and duck
 * **Footage:** royalty-free stock from Pexels (free for commercial use, no attribution required):
   `office.mp4` (one continuous take of the professional, used for every office shot), `reception.mp4`,
   `doctor_close.mp4`. These aren't Meriva staff or premises.
-* **Music and SFX:** an original synthesized score plus Ootto's house SFX library (typing, whoosh, soft swoosh).
+* **Music and SFX:** an original score and foley, all synthesized in `audio/music.py` (the footage cut on Ootto used the house typing/whoosh samples).
 
 ## Open items
 
@@ -45,10 +63,13 @@ being sped up. The score is synthesized from scratch (`audio/music.py`) and duck
 
 ## Rebuild
 
-Media goes in `public/`: `office.mp4`, `reception.mp4`, `doctor_close.mp4`, `logo.png`, `mix.wav`.
+`public/` already holds the logo and the bundled Oswald/Inter fonts. Renders need no network.
 
 ```bash
-cd audio && python3 vo.py && python3 music.py && cp mix.wav ../public/   # needs vo_take.mp3 + sfx/
-npm install && npm run render              # out/meriva_ep01_clean.mp4
-npm run render:placeholder                 # end card with the phone/address slot
+cd audio && python3 vo.py && python3 music.py && cp mix.wav ../public/ && cd ..   # voice take is audio/vo_take.ogg
+npm install
+export REMOTION_CHROME=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell   # optional: local Chromium
+npm run render:code -- --browser-executable=$REMOTION_CHROME   # all-code edition, no other media needed
+npm run render                             # footage cut: also needs office.mp4, reception.mp4, doctor_close.mp4 in public/
+npm run render:placeholder                 # footage cut with the phone/address slot
 ```
