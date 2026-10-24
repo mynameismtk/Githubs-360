@@ -2,6 +2,7 @@ import 'server-only'
 import { db } from '../db'
 import { audit } from '../audit'
 import { errors } from '@/lib/errors'
+import { mrnPrefix } from '@/lib/theme'
 import { assertCanAccessPatient, accessiblePatientIds } from '../auth/policy'
 import type { SessionActor } from '../auth/session'
 import { Prisma, type Gender, type Relationship } from '@prisma/client'
@@ -114,8 +115,8 @@ export async function addFamilyMember(actor: SessionActor, input: AddFamilyMembe
   eighteenthBirthday.setFullYear(eighteenthBirthday.getFullYear() + 18)
 
   const created = await db.$transaction(async (tx) => {
-    const clinic = await tx.clinic.findUniqueOrThrow({ where: { id: actor.clinicId }, select: { id: true } })
-    const mrn = await nextMrn(tx)
+    const clinic = await tx.clinic.findUniqueOrThrow({ where: { id: actor.clinicId }, select: { id: true, settings: true } })
+    const mrn = await nextMrn(tx, mrnPrefix(clinic.settings))
 
     const patient = await tx.patient.create({
       data: {
@@ -170,10 +171,10 @@ export async function addFamilyMember(actor: SessionActor, input: AddFamilyMembe
  * desk. A sequence is atomic and never hands out the same value twice; the unique
  * constraint on (clinicId, mrn) remains the backstop.
  */
-async function nextMrn(tx: Prisma.TransactionClient): Promise<string> {
+async function nextMrn(tx: Prisma.TransactionClient, prefix: string): Promise<string> {
   const rows = await tx.$queryRaw<Array<{ nextval: bigint }>>`SELECT nextval('mrn_seq') AS nextval`
   const value = rows[0]?.nextval ?? BigInt(Date.now())
-  return `C360-${String(value).padStart(5, '0')}`
+  return `${prefix}${String(value).padStart(5, '0')}`
 }
 
 /** Patient-facing search across the family the actor may see. Never clinic-wide. */

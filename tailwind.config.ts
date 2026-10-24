@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 /**
- * Clinic 360 design tokens.
+ * Design tokens.
  *
  * Colours resolve to CSS custom properties rather than literal hex values so that a
  * clinic's brand (Clinic.brandPrimary / brandAccent) can re-skin the entire product at
@@ -14,32 +14,32 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: 'var(--bg)',
-        surface: 'var(--surface)',
-        'surface-sunken': 'var(--surface-sunken)',
-        'surface-raised': 'var(--surface-raised)',
-        border: 'var(--border)',
-        'border-strong': 'var(--border-strong)',
-        ink: 'var(--ink)',
-        'ink-muted': 'var(--ink-muted)',
-        'ink-subtle': 'var(--ink-subtle)',
-        'ink-inverse': 'var(--ink-inverse)',
-        brand: 'var(--brand)',
-        'brand-ink': 'var(--brand-ink)',
-        'brand-wash': 'var(--brand-wash)',
-        'brand-hover': 'var(--brand-hover)',
-        accent: 'var(--accent)',
-        'accent-wash': 'var(--accent-wash)',
-        positive: 'var(--positive)',
-        'positive-wash': 'var(--positive-wash)',
-        caution: 'var(--caution)',
-        'caution-wash': 'var(--caution-wash)',
-        critical: 'var(--critical)',
-        'critical-wash': 'var(--critical-wash)',
-        emergency: 'var(--emergency)',
+        bg: 'rgb(var(--bg-rgb) / <alpha-value>)',
+        surface: 'rgb(var(--surface-rgb) / <alpha-value>)',
+        'surface-sunken': 'rgb(var(--surface-sunken-rgb) / <alpha-value>)',
+        'surface-raised': 'rgb(var(--surface-raised-rgb) / <alpha-value>)',
+        border: 'rgb(var(--border-rgb) / <alpha-value>)',
+        'border-strong': 'rgb(var(--border-strong-rgb) / <alpha-value>)',
+        ink: 'rgb(var(--ink-rgb) / <alpha-value>)',
+        'ink-muted': 'rgb(var(--ink-muted-rgb) / <alpha-value>)',
+        'ink-subtle': 'rgb(var(--ink-subtle-rgb) / <alpha-value>)',
+        'ink-inverse': 'rgb(var(--ink-inverse-rgb) / <alpha-value>)',
+        brand: 'rgb(var(--brand-rgb) / <alpha-value>)',
+        'brand-ink': 'rgb(var(--brand-ink-rgb) / <alpha-value>)',
+        'brand-wash': 'rgb(var(--brand-wash-rgb) / <alpha-value>)',
+        'brand-hover': 'rgb(var(--brand-hover-rgb) / <alpha-value>)',
+        accent: 'rgb(var(--accent-rgb) / <alpha-value>)',
+        'accent-wash': 'rgb(var(--accent-wash-rgb) / <alpha-value>)',
+        positive: 'rgb(var(--positive-rgb) / <alpha-value>)',
+        'positive-wash': 'rgb(var(--positive-wash-rgb) / <alpha-value>)',
+        caution: 'rgb(var(--caution-rgb) / <alpha-value>)',
+        'caution-wash': 'rgb(var(--caution-wash-rgb) / <alpha-value>)',
+        critical: 'rgb(var(--critical-rgb) / <alpha-value>)',
+        'critical-wash': 'rgb(var(--critical-wash-rgb) / <alpha-value>)',
+        emergency: 'rgb(var(--emergency-rgb) / <alpha-value>)',
       },
       fontFamily: {
-        sans: ['var(--font-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['rgb(var(--font-sans-rgb) / <alpha-value>)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         overline: ['0.6875rem', { lineHeight: '0.875rem', letterSpacing: '0.08em', fontWeight: '600' }],

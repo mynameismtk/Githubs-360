@@ -1,11 +1,17 @@
 import type { Metadata, Viewport } from 'next'
+import { getClinic } from '@/server/services/clinic-service'
+import { clinicThemeStyle } from '@/lib/theme'
 import './globals.css'
 
-export const metadata: Metadata = {
-  title: 'Clinic 360',
-  description: 'Your clinic, your records, your care — in one place.',
-  // Patient-facing health data must never be indexed or previewed by a crawler.
-  robots: { index: false, follow: false },
+export async function generateMetadata(): Promise<Metadata> {
+  const clinic = await getClinic()
+  return {
+    title: clinic.name,
+    description: 'Your clinic, your records, your care — in one place.',
+    icons: clinic.logoUrl ? { icon: clinic.logoUrl } : undefined,
+    // Patient-facing health data must never be indexed or previewed by a crawler.
+    robots: { index: false, follow: false },
+  }
 }
 
 export const viewport: Viewport = {
@@ -19,9 +25,10 @@ export const viewport: Viewport = {
   ],
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const clinic = await getClinic()
   return (
-    <html lang="en">
+    <html lang="en" style={clinicThemeStyle(clinic)}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />

@@ -9,7 +9,7 @@ const TONES: Record<Tone, string> = {
   positive: 'bg-[var(--positive-wash)] text-[var(--positive)] border-transparent',
   caution: 'bg-[var(--caution-wash)] text-[var(--caution)] border-transparent',
   critical: 'bg-[var(--critical-wash)] text-[var(--critical)] border-transparent',
-  accent: 'bg-accent-wash text-accent border-transparent',
+  accent: 'bg-accent-wash text-ink border-transparent',
 }
 
 /**

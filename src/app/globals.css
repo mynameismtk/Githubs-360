@@ -3,71 +3,118 @@
 @tailwind utilities;
 
 /*
- * Clinic 360 — token layer.
- * Semantic names only. Components never reference a literal colour.
+ * Token layer.
+ * Semantic names only. Components never reference a literal colour. Each colour is
+ * stored as RGB channels (`--x-rgb`) so Tailwind opacity modifiers (`bg-brand/15`) compile.
  * docs/06-design-system.md §2.
  */
 :root {
-  --bg: #faf9f7;
-  --surface: #ffffff;
-  --surface-sunken: #f2f0ec;
-  --surface-raised: #ffffff;
-  --border: #e7e3dc;
-  --border-strong: #d3cec5;
+  --bg-rgb: 250 249 247;
+  --bg: rgb(var(--bg-rgb));
+  --surface-rgb: 255 255 255;
+  --surface: rgb(var(--surface-rgb));
+  --surface-sunken-rgb: 242 240 236;
+  --surface-sunken: rgb(var(--surface-sunken-rgb));
+  --surface-raised-rgb: 255 255 255;
+  --surface-raised: rgb(var(--surface-raised-rgb));
+  --border-rgb: 231 227 220;
+  --border: rgb(var(--border-rgb));
+  --border-strong-rgb: 211 206 197;
+  --border-strong: rgb(var(--border-strong-rgb));
 
-  --ink: #16211f;
-  --ink-muted: #5c6b68;
-  --ink-subtle: #8a9793;
-  --ink-inverse: #ffffff;
+  --ink-rgb: 22 33 31;
+  --ink: rgb(var(--ink-rgb));
+  --ink-muted-rgb: 92 107 104;
+  --ink-muted: rgb(var(--ink-muted-rgb));
+  --ink-subtle-rgb: 138 151 147;
+  --ink-subtle: rgb(var(--ink-subtle-rgb));
+  --ink-inverse-rgb: 255 255 255;
+  --ink-inverse: rgb(var(--ink-inverse-rgb));
 
-  /* Brand tokens are overwritten at runtime from Clinic.brandPrimary/brandAccent. */
-  --brand: #0e7c6b;
-  --brand-hover: #0b6759;
-  --brand-ink: #0a5f52;
-  --brand-wash: #e8f3f0;
+  /* Brand tokens are overwritten at runtime on <html> from the Clinic record (src/lib/theme.ts). */
+  --brand-rgb: 14 124 107;
+  --brand: rgb(var(--brand-rgb));
+  --brand-hover-rgb: 11 103 89;
+  --brand-hover: rgb(var(--brand-hover-rgb));
+  --brand-ink-rgb: 10 95 82;
+  --brand-ink: rgb(var(--brand-ink-rgb));
+  --brand-wash-rgb: 232 243 240;
+  --brand-wash: rgb(var(--brand-wash-rgb));
 
-  --accent: #c2703d;
-  --accent-wash: #fbf0e8;
+  --accent-rgb: 194 112 61;
+  --accent: rgb(var(--accent-rgb));
+  --accent-wash-rgb: 251 240 232;
+  --accent-wash: rgb(var(--accent-wash-rgb));
 
-  --positive: #2f7d5b;
-  --positive-wash: #e9f4ee;
-  --caution: #b07a16;
-  --caution-wash: #fdf3e0;
-  --critical: #b3261e;
-  --critical-wash: #fdecea;
-  --emergency: #c0271f;
+  --positive-rgb: 47 125 91;
+  --positive: rgb(var(--positive-rgb));
+  --positive-wash-rgb: 233 244 238;
+  --positive-wash: rgb(var(--positive-wash-rgb));
+  --caution-rgb: 176 122 22;
+  --caution: rgb(var(--caution-rgb));
+  --caution-wash-rgb: 253 243 224;
+  --caution-wash: rgb(var(--caution-wash-rgb));
+  --critical-rgb: 179 38 30;
+  --critical: rgb(var(--critical-rgb));
+  --critical-wash-rgb: 253 236 234;
+  --critical-wash: rgb(var(--critical-wash-rgb));
+  --emergency-rgb: 192 39 31;
+  --emergency: rgb(var(--emergency-rgb));
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 [data-theme='dark'] {
-  --bg: #101614;
-  --surface: #171e1c;
-  --surface-sunken: #1e2624;
-  --surface-raised: #1c2422;
-  --border: #2a3331;
-  --border-strong: #3a4441;
+  --bg-rgb: 16 22 20;
+  --bg: rgb(var(--bg-rgb));
+  --surface-rgb: 23 30 28;
+  --surface: rgb(var(--surface-rgb));
+  --surface-sunken-rgb: 30 38 36;
+  --surface-sunken: rgb(var(--surface-sunken-rgb));
+  --surface-raised-rgb: 28 36 34;
+  --surface-raised: rgb(var(--surface-raised-rgb));
+  --border-rgb: 42 51 49;
+  --border: rgb(var(--border-rgb));
+  --border-strong-rgb: 58 68 65;
+  --border-strong: rgb(var(--border-strong-rgb));
 
-  --ink: #eef2f0;
-  --ink-muted: #a3b0ad;
-  --ink-subtle: #77837f;
-  --ink-inverse: #101614;
+  --ink-rgb: 238 242 240;
+  --ink: rgb(var(--ink-rgb));
+  --ink-muted-rgb: 163 176 173;
+  --ink-muted: rgb(var(--ink-muted-rgb));
+  --ink-subtle-rgb: 119 131 127;
+  --ink-subtle: rgb(var(--ink-subtle-rgb));
+  --ink-inverse-rgb: 16 22 20;
+  --ink-inverse: rgb(var(--ink-inverse-rgb));
 
-  --brand: #3aa08c;
-  --brand-hover: #47b09b;
-  --brand-ink: #7fd0bf;
-  --brand-wash: #16302b;
+  --brand-rgb: 58 160 140;
+  --brand: rgb(var(--brand-rgb));
+  --brand-hover-rgb: 71 176 155;
+  --brand-hover: rgb(var(--brand-hover-rgb));
+  --brand-ink-rgb: 127 208 191;
+  --brand-ink: rgb(var(--brand-ink-rgb));
+  --brand-wash-rgb: 22 48 43;
+  --brand-wash: rgb(var(--brand-wash-rgb));
 
-  --accent: #d9895a;
-  --accent-wash: #2e2019;
+  --accent-rgb: 217 137 90;
+  --accent: rgb(var(--accent-rgb));
+  --accent-wash-rgb: 46 32 25;
+  --accent-wash: rgb(var(--accent-wash-rgb));
 
-  --positive: #4da97f;
-  --positive-wash: #162b21;
-  --caution: #d3a03c;
-  --caution-wash: #2d2513;
-  --critical: #e2685f;
-  --critical-wash: #2f1917;
-  --emergency: #e2685f;
+  --positive-rgb: 77 169 127;
+  --positive: rgb(var(--positive-rgb));
+  --positive-wash-rgb: 22 43 33;
+  --positive-wash: rgb(var(--positive-wash-rgb));
+  --caution-rgb: 211 160 60;
+  --caution: rgb(var(--caution-rgb));
+  --caution-wash-rgb: 45 37 19;
+  --caution-wash: rgb(var(--caution-wash-rgb));
+  --critical-rgb: 226 104 95;
+  --critical: rgb(var(--critical-rgb));
+  --critical-wash-rgb: 47 25 23;
+  --critical-wash: rgb(var(--critical-wash-rgb));
+  --emergency-rgb: 226 104 95;
+  --emergency: rgb(var(--emergency-rgb));
 }
 
 * {

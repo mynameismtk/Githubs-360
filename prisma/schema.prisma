@@ -1,4 +1,4 @@
-// Clinic 360 — data model
+// Clinic platform — data model
 //
 // Conventions used throughout this schema:
 //   * cuid() primary keys      — opaque, non-enumerable, safe to place in URLs.

@@ -106,32 +106,41 @@ async function main() {
   console.log('Creating clinic…')
   const clinic = await db.clinic.create({
     data: {
-      slug: 'meridian-health',
-      name: 'Meridian Health',
-      tagline: 'Multi-speciality care, close to home',
-      brandPrimary: '#0E7C6B',
-      brandAccent: '#C2703D',
-      supportPhone: '+914842890100',
-      supportEmail: 'care@meridianhealth.example',
+      slug: 'meriva-medical-centre',
+      name: 'Meriva Medical Centre',
+      tagline: 'A place where care meets life.',
+      logoUrl: '/brand/meriva-mark.png',
+      // Proposed from the logo palette (docs/10 §2.3); confirm with the clinic.
+      brandPrimary: '#0E56A0',
+      brandAccent: '#F07F1A',
+      // PLACEHOLDER: replace with the clinic's real front-desk number before launch.
+      supportPhone: '+914220000000',
+      supportEmail: 'care@meriva.example',
       emergencyPhone: '108',
-      registrationNo: 'KL/CLR/2019/04471',
+      registrationNo: null,
       timezone: 'Asia/Kolkata',
-      settings: { twoPersonLabRelease: false, allowOverbooking: true },
+      settings: {
+        twoPersonLabRelease: false,
+        allowOverbooking: true,
+        theme: { brandHover: '#0B4787', brandInk: '#0B3A6E', brandWash: '#E7EFF8', accentWash: '#FEF1E3' },
+        // PLACEHOLDER: confirm the MRN prefix with the clinic.
+        mrnPrefix: 'MMC-',
+      },
     },
   })
 
   const mainLocation = await db.location.create({
     data: {
       clinicId: clinic.id,
-      name: 'Meridian Health — Panampilly Nagar',
-      addressLine1: '3rd Floor, Anchor Plaza, Avenue Road',
-      addressLine2: 'Panampilly Nagar',
-      city: 'Kochi',
-      state: 'Kerala',
-      pincode: '682036',
-      phone: '+914842890100',
-      latitude: 9.9646,
-      longitude: 76.2946,
+      name: 'Meriva Medical Centre, Coimbatore',
+      // PLACEHOLDER address and coordinates: replace with the clinic's real ones.
+      addressLine1: 'Address to be confirmed',
+      city: 'Coimbatore',
+      state: 'Tamil Nadu',
+      pincode: '641001',
+      phone: '+914220000000',
+      latitude: 11.0168,
+      longitude: 76.9558,
       isPrimary: true,
       openingHours: [
         { day: 1, opensAt: '08:00', closesAt: '20:00' },
@@ -140,25 +149,6 @@ async function main() {
         { day: 4, opensAt: '08:00', closesAt: '20:00' },
         { day: 5, opensAt: '08:00', closesAt: '20:00' },
         { day: 6, opensAt: '08:00', closesAt: '14:00' },
-      ],
-    },
-  })
-
-  const annexe = await db.location.create({
-    data: {
-      clinicId: clinic.id,
-      name: 'Meridian Health — Kakkanad Annexe',
-      addressLine1: 'Ground Floor, Vyttila Junction Road',
-      city: 'Kochi',
-      state: 'Kerala',
-      pincode: '682030',
-      phone: '+914842890180',
-      latitude: 10.0158,
-      longitude: 76.3419,
-      openingHours: [
-        { day: 1, opensAt: '09:00', closesAt: '17:00' },
-        { day: 3, opensAt: '09:00', closesAt: '17:00' },
-        { day: 5, opensAt: '09:00', closesAt: '17:00' },
       ],
     },
   })
@@ -306,7 +296,7 @@ async function main() {
         clinicId: clinic.id,
         phone: d.phone,
         fullName: d.name,
-        email: `${d.name.toLowerCase().replace(/\s+/g, '.')}@meridianhealth.example`,
+        email: `${d.name.toLowerCase().replace(/\s+/g, '.')}@meriva.example`,
         role: 'DOCTOR',
         phoneVerifiedAt: new Date(),
       },
@@ -317,14 +307,14 @@ async function main() {
         userId: user.id,
         specialityId: specialities[d.spec]!.id,
         qualifications: d.quals,
-        registrationNo: `TCMC/${52000 + index * 137}`,
+        registrationNo: `DEMO-${52000 + index * 137}`,
         yearsExperience: d.exp,
         languages: [...d.langs],
         consultationFee: d.fee,
         followUpFee: Math.round(d.fee * 0.6),
         slotDurationMins: d.slot,
         displayOrder: index,
-        bio: `Dr. ${d.name} has ${d.exp} years of experience in ${specialities[d.spec]!.name.toLowerCase()} and consults at Meridian Health.`,
+        bio: `Dr. ${d.name} has ${d.exp} years of experience in ${specialities[d.spec]!.name.toLowerCase()} and consults at ${clinic.name}.`,
       },
     })
     doctors.push({ id: doctor.id, userId: user.id, name: d.name, spec: d.spec, slot: d.slot })
@@ -346,7 +336,7 @@ async function main() {
         await db.doctorScheduleRule.create({
           data: {
             doctorId: doctor.id,
-            locationId: index % 6 === 0 ? annexe.id : mainLocation.id,
+            locationId: mainLocation.id,
             dayOfWeek: day,
             startTime: '16:00',
             endTime: '19:00',
@@ -594,7 +584,7 @@ async function main() {
     dobDate: Date
     gender: Gender
     blood?: Prisma.PatientCreateInput['bloodGroup']
-    city?: string
+    address?: string
   }): Promise<SeededPatient> {
     const user = await db.user.create({
       data: { clinicId: clinic.id, phone: opts.phone, fullName: opts.name, role: 'PATIENT', phoneVerifiedAt: new Date() },
@@ -603,16 +593,16 @@ async function main() {
     const patient = await db.patient.create({
       data: {
         clinicId: clinic.id,
-        mrn: `C360-${String(mrnRow[0]!.nextval).padStart(5, '0')}`,
+        mrn: `MMC-${String(mrnRow[0]!.nextval).padStart(5, '0')}`,
         fullName: opts.name,
         dateOfBirth: opts.dobDate,
         gender: opts.gender,
         phone: opts.phone,
         bloodGroup: opts.blood ?? 'UNKNOWN',
-        addressLine1: '12/A, Sea View Apartments',
-        city: opts.city ?? 'Kochi',
-        state: 'Kerala',
-        pincode: '682036',
+        addressLine1: opts.address ?? '12/A, Sea View Apartments',
+        city: 'Coimbatore',
+        state: 'Tamil Nadu',
+        pincode: '641001',
       },
     })
     await db.patientAccessGrant.create({
@@ -633,13 +623,13 @@ async function main() {
     const patient = await db.patient.create({
       data: {
         clinicId: clinic.id,
-        mrn: `C360-${String(mrnRow[0]!.nextval).padStart(5, '0')}`,
+        mrn: `MMC-${String(mrnRow[0]!.nextval).padStart(5, '0')}`,
         fullName: opts.name,
         dateOfBirth: opts.dobDate,
         gender: opts.gender,
         isDependent: true,
-        city: 'Kochi',
-        state: 'Kerala',
+        city: 'Coimbatore',
+        state: 'Tamil Nadu',
       },
     })
     const isMinor = Date.now() - opts.dobDate.getTime() < 18 * 365.25 * 86_400_000
@@ -702,6 +692,7 @@ async function main() {
       dobDate: dob(year, 1 + Math.floor(rand() * 12), 1 + Math.floor(rand() * 28)),
       gender: pick(['MALE', 'FEMALE'] as const),
       blood: pick(['O_POS', 'A_POS', 'B_POS', 'AB_POS', 'O_NEG', 'UNKNOWN'] as const),
+      address: `${1 + Math.floor(rand() * 98)}, ${pick(['Race Course Road', 'Avinashi Road', 'Trichy Road', 'Mettupalayam Road', 'DB Road', 'Sathy Road'] as const)}`,
     })
     patients.push(p)
   }
@@ -945,7 +936,7 @@ async function main() {
     data: {
       clinicId: clinic.id, patientId: demoPatient.id, kind: 'LAB_REPORT', occurredAt: ist(-13, 17, 10),
       title: 'Lipid Profile, Complete Blood Count', summary: 'Report available',
-      sourceType: 'LabOrder', sourceId: labOrder.id, authorName: 'Meridian Laboratory', specialityName: 'Laboratory',
+      sourceType: 'LabOrder', sourceId: labOrder.id, authorName: `${clinic.name} Laboratory`, specialityName: 'Laboratory',
     },
   })
 
@@ -1165,13 +1156,6 @@ async function main() {
         body: 'Your lab reports appear under Records as soon as they are verified. You no longer need to collect a printout.',
         publishedAt: ist(-9, 9, 0),
       },
-      {
-        clinicId: clinic.id,
-        title: 'Free parking at the Kakkanad Annexe',
-        body: 'Parking at the Kakkanad Annexe is now free for patients with an appointment. Show your appointment in the app at the gate.',
-        publishedAt: ist(-20, 9, 0),
-        expiresAt: ist(40, 9, 0),
-      },
     ],
   })
 
@@ -1186,7 +1170,7 @@ async function main() {
       {
         clinicId: clinic.id, userId: demoPatient.userId!, patientId: demoPatient.id,
         kind: 'APPOINTMENT_REMINDER', title: 'Appointment tomorrow',
-        body: 'Dr. Anil Kumar, Cardiology — tomorrow at 10:20 AM at Panampilly Nagar.',
+        body: 'Dr. Anil Kumar, Cardiology — tomorrow at 10:20 AM at ' + mainLocation.name + '.',
         actionUrl: demoUpcoming ? `/app/appointments/${demoUpcoming.id}` : '/app/appointments',
         channel: 'IN_APP', status: 'SENT', sentAt: ist(0, 8, 0),
       },

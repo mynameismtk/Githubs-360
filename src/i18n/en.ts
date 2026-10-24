@@ -8,7 +8,6 @@
  */
 export const en = {
   common: {
-    appName: 'Clinic 360',
     back: 'Back',
     next: 'Next',
     cancel: 'Cancel',

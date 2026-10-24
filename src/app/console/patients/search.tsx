@@ -17,7 +17,7 @@ interface Result {
   phone: string | null
 }
 
-export function PatientSearch() {
+export function PatientSearch({ mrnPrefix }: { mrnPrefix: string }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Result[] | null>(null)
   const [loading, setLoading] = useState(false)
@@ -54,7 +54,7 @@ export function PatientSearch() {
           value={query}
           autoFocus
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="e.g. Arun Menon, C360-01001, 9400000001"
+          placeholder={`e.g. Arun Menon, ${mrnPrefix}01001, 9400000001`}
         />
       </Field>
 

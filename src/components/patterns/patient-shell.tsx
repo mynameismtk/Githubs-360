@@ -55,12 +55,8 @@ export function PatientShell({
   const [emergencyOpen, setEmergencyOpen] = useState(false)
 
   return (
-    <div
-      className="min-h-dvh bg-bg"
-      // Clinic branding is applied at runtime from the database, so the whole product
-      // re-skins per clinic without a rebuild (§42).
-      style={{ ['--brand' as string]: clinic.brandPrimary, ['--accent' as string]: clinic.brandAccent }}
-    >
+    // Clinic branding is injected once on <html> by the root layout (src/lib/theme.ts).
+    <div className="min-h-dvh bg-bg">
       <a href="#main" className="skip-link">Skip to content</a>
 
       <header className="sticky top-0 z-30 border-b border-border bg-bg/90 backdrop-blur">
@@ -86,7 +82,7 @@ export function PatientShell({
           >
             <IconBell size={20} />
             {unreadCount > 0 ? (
-              <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white tabular">
+              <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-ink tabular">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             ) : null}

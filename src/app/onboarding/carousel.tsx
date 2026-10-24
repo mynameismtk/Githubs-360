@@ -10,10 +10,10 @@ import { cn } from '@/lib/cn'
  * Four screens, then straight to sign-in (§33). Onboarding is skippable from the first
  * screen — a returning patient reinstalling the app should not have to swipe through it.
  */
-const SLIDES = [
+const slides = (clinicName: string) => [
   {
     icon: IconShield,
-    title: 'Welcome to Clinic 360',
+    title: `Welcome to ${clinicName}`,
     body: 'Your appointments, prescriptions, reports and bills — all in one place, always with you.',
   },
   {
@@ -31,10 +31,11 @@ const SLIDES = [
     title: 'Stay on top of your care',
     body: "We'll remind you about follow-ups, medicines and reports — for you and for your family.",
   },
-] as const
+]
 
 export function OnboardingCarousel({ clinicName }: { clinicName: string }) {
   const [index, setIndex] = useState(0)
+  const SLIDES = slides(clinicName)
   const slide = SLIDES[index]!
   const Icon = slide.icon
   const isLast = index === SLIDES.length - 1
